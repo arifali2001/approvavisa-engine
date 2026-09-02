@@ -1,0 +1,1018 @@
+{
+  "countries": [
+    {
+      "code": "US",
+      "name": "United States",
+      "flag": "🇺🇸",
+      "slug": "us-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 51,
+          "height": 51,
+          "unit": "mm",
+          "widthInches": "2×2 inches",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white",
+          "headSizePercent": "50-69%",
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "10MB",
+          "sourceUrl": "https://travel.state.gov/content/travel/en/passports/how-apply/photos.html",
+          "lastVerified": "2026-08-15"
+        }
+      ],
+      "popular": true
+    },
+    {
+      "code": "GB",
+      "name": "United Kingdom",
+      "flag": "🇬🇧",
+      "slug": "uk-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#F0F0F0",
+          "bgDescription": "Light grey or cream",
+          "headSizePercent": "70-80%",
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "10MB",
+          "sourceUrl": "https://www.gov.uk/photos-for-passports",
+          "lastVerified": "2026-08-15"
+        }
+      ],
+      "popular": true
+    },
+    {
+      "code": "CA",
+      "name": "Canada",
+      "flag": "🇨🇦",
+      "slug": "canada-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 50,
+          "height": 70,
+          "unit": "mm",
+          "widthInches": "50×70 mm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white or light-coloured",
+          "headSizePercent": "50-70%",
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "15MB",
+          "sourceUrl": "https://www.canada.ca/en/immigration-refugees-citizenship/services/canadian-passports/photos.html",
+          "lastVerified": "2026-08-12"
+        }
+      ],
+      "popular": true
+    },
+    {
+      "code": "IN",
+      "name": "India",
+      "flag": "🇮🇳",
+      "slug": "india-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 51,
+          "height": 51,
+          "unit": "mm",
+          "widthInches": "2×2 inches",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white",
+          "headSizePercent": "50-70%",
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "10MB",
+          "sourceUrl": "https://passportindia.gov.in/AppOnlineProject/online/photoSpecs",
+          "lastVerified": "2026-08-10"
+        }
+      ],
+      "popular": true
+    },
+    {
+      "code": "AU",
+      "name": "Australia",
+      "flag": "🇦🇺",
+      "slug": "australia-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "White or light grey",
+          "headSizePercent": "60-80%",
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "5MB",
+          "sourceUrl": "https://www.passports.gov.au/passport-photos",
+          "lastVerified": "2026-08-14"
+        }
+      ],
+      "popular": true
+    },
+    {
+      "code": "AE",
+      "name": "United Arab Emirates",
+      "flag": "🇦🇪",
+      "slug": "uae-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 43,
+          "height": 55,
+          "unit": "mm",
+          "widthInches": "43×55 mm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white",
+          "headSizePercent": "60-70%",
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "10MB",
+          "sourceUrl": "https://icp.gov.ae/en/",
+          "lastVerified": "2026-08-10"
+        }
+      ],
+      "popular": true
+    },
+    {
+      "code": "EU",
+      "name": "Schengen / EU",
+      "flag": "🇪🇺",
+      "slug": "schengen-visa-photo",
+      "documents": [
+        {
+          "type": "Visa",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#E8E8E8",
+          "bgDescription": "Light grey or light blue",
+          "headSizePercent": "70-80%",
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "10MB",
+          "sourceUrl": "https://home-affairs.ec.europa.eu/policies/schengen-borders-and-visa_en",
+          "lastVerified": "2026-08-11"
+        }
+      ],
+      "popular": true
+    },
+    {
+      "code": "CN",
+      "name": "China",
+      "flag": "🇨🇳",
+      "slug": "china-visa-photo",
+      "documents": [
+        {
+          "type": "Visa",
+          "width": 33,
+          "height": 48,
+          "unit": "mm",
+          "widthInches": "33×48 mm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white",
+          "headSizePercent": "55-70%",
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "5MB",
+          "sourceUrl": "https://www.visaforchina.cn/",
+          "lastVerified": "2026-08-08"
+        }
+      ],
+      "popular": true
+    },
+    {
+      "code": "JP",
+      "name": "Japan",
+      "flag": "🇯🇵",
+      "slug": "japan-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white or light",
+          "headSizePercent": "60-70%",
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "5MB",
+          "sourceUrl": "https://www.mofa.go.jp/j_info/visit/visa/index.html",
+          "lastVerified": "2026-08-09"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "DE",
+      "name": "Germany",
+      "flag": "🇩🇪",
+      "slug": "germany-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#E0E0E0",
+          "bgDescription": "Light grey to white",
+          "headSizePercent": "70-80%",
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "10MB",
+          "sourceUrl": "https://www.bmi.bund.de/",
+          "lastVerified": "2026-08-13"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "FR",
+      "name": "France",
+      "flag": "🇫🇷",
+      "slug": "france-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#E0E0E0",
+          "bgDescription": "Light grey, blue, or white",
+          "headSizePercent": "70-80%",
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "10MB",
+          "sourceUrl": "https://france-visas.gouv.fr/",
+          "lastVerified": "2026-08-12"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "SA",
+      "name": "Saudi Arabia",
+      "flag": "🇸🇦",
+      "slug": "saudi-arabia-visa-photo",
+      "documents": [
+        {
+          "type": "Visa",
+          "width": 40,
+          "height": 60,
+          "unit": "mm",
+          "widthInches": "4×6 cm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white",
+          "headSizePercent": "50-70%",
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "10MB",
+          "sourceUrl": "https://visa.mofa.gov.sa/",
+          "lastVerified": "2026-08-10"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "SG",
+      "name": "Singapore",
+      "flag": "🇸🇬",
+      "slug": "singapore-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white",
+          "headSizePercent": "65-75%",
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "5MB",
+          "sourceUrl": "https://www.ica.gov.sg/",
+          "lastVerified": "2026-08-11"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "KR",
+      "name": "South Korea",
+      "flag": "🇰🇷",
+      "slug": "south-korea-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white",
+          "headSizePercent": "60-70%",
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "5MB",
+          "sourceUrl": "https://www.passport.go.kr/",
+          "lastVerified": "2026-08-10"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "BR",
+      "name": "Brazil",
+      "flag": "🇧🇷",
+      "slug": "brazil-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 50,
+          "height": 70,
+          "unit": "mm",
+          "widthInches": "5×7 cm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white",
+          "headSizePercent": "55-70%",
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "10MB",
+          "sourceUrl": "https://www.gov.br/",
+          "lastVerified": "2026-08-09"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "MX",
+      "name": "Mexico",
+      "flag": "🇲🇽",
+      "slug": "mexico-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 45,
+          "height": 55,
+          "unit": "mm",
+          "widthInches": "4.5×5.5 cm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white",
+          "headSizePercent": "60-70%",
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "10MB",
+          "sourceUrl": "https://www.gob.mx/sre",
+          "lastVerified": "2026-08-10"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "IT",
+      "name": "Italy",
+      "flag": "🇮🇹",
+      "slug": "italy-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "White or light grey",
+          "headSizePercent": "70-80%",
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "10MB",
+          "sourceUrl": "https://www.poliziadistato.it/",
+          "lastVerified": "2026-08-11"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "ES",
+      "name": "Spain",
+      "flag": "🇪🇸",
+      "slug": "spain-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 32,
+          "height": 40,
+          "unit": "mm",
+          "widthInches": "32×40 mm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white uniform",
+          "headSizePercent": "70-80%",
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "10MB",
+          "sourceUrl": "https://www.policia.es/",
+          "lastVerified": "2026-08-11"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "NL",
+      "name": "Netherlands",
+      "flag": "🇳🇱",
+      "slug": "netherlands-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#E8E8E8",
+          "bgDescription": "Light grey uniform",
+          "headSizePercent": "60-80%",
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "10MB",
+          "sourceUrl": "https://www.rijksoverheid.nl/",
+          "lastVerified": "2026-08-10"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "TR",
+      "name": "Turkey",
+      "flag": "🇹🇷",
+      "slug": "turkey-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 50,
+          "height": 60,
+          "unit": "mm",
+          "widthInches": "5×6 cm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white",
+          "headSizePercent": "60-70%",
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "10MB",
+          "sourceUrl": "https://www.nvi.gov.tr/",
+          "lastVerified": "2026-08-09"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "RU",
+      "name": "Russia",
+      "flag": "🇷🇺",
+      "slug": "russia-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white",
+          "headSizePercent": "60-80%",
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "10MB",
+          "sourceUrl": "https://www.mid.ru/",
+          "lastVerified": "2026-08-08"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "MY",
+      "name": "Malaysia",
+      "flag": "🇲🇾",
+      "slug": "malaysia-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 35,
+          "height": 50,
+          "unit": "mm",
+          "widthInches": "35×50 mm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white",
+          "headSizePercent": "60-70%",
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "5MB",
+          "sourceUrl": "https://www.imi.gov.my/",
+          "lastVerified": "2026-08-09"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "TH",
+      "name": "Thailand",
+      "flag": "🇹🇭",
+      "slug": "thailand-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white",
+          "headSizePercent": "60-70%",
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "5MB",
+          "sourceUrl": "https://consular.mfa.go.th/",
+          "lastVerified": "2026-08-10"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "PH",
+      "name": "Philippines",
+      "flag": "🇵🇭",
+      "slug": "philippines-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 45,
+          "height": 55,
+          "unit": "mm",
+          "widthInches": "4.5×5.5 cm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white",
+          "headSizePercent": "55-70%",
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "10MB",
+          "sourceUrl": "https://consular.dfa.gov.ph/",
+          "lastVerified": "2026-08-09"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "ID",
+      "name": "Indonesia",
+      "flag": "🇮🇩",
+      "slug": "indonesia-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 51,
+          "height": 51,
+          "unit": "mm",
+          "widthInches": "2×2 inches",
+          "bgColor": "#FF0000",
+          "bgDescription": "Solid red",
+          "headSizePercent": "55-70%",
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "5MB",
+          "sourceUrl": "https://www.imigrasi.go.id/",
+          "lastVerified": "2026-08-08"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "VN",
+      "name": "Vietnam",
+      "flag": "🇻🇳",
+      "slug": "vietnam-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 40,
+          "height": 60,
+          "unit": "mm",
+          "widthInches": "4×6 cm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white",
+          "headSizePercent": "55-70%",
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "10MB",
+          "sourceUrl": "https://evisa.xuatnhapcanh.gov.vn/",
+          "lastVerified": "2026-08-09"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "NZ",
+      "name": "New Zealand",
+      "flag": "🇳🇿",
+      "slug": "new-zealand-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white or off-white",
+          "headSizePercent": "60-75%",
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "5MB",
+          "sourceUrl": "https://www.passports.govt.nz/",
+          "lastVerified": "2026-08-11"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "ZA",
+      "name": "South Africa",
+      "flag": "🇿🇦",
+      "slug": "south-africa-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white",
+          "headSizePercent": "60-70%",
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "10MB",
+          "sourceUrl": "https://www.dha.gov.za/",
+          "lastVerified": "2026-08-08"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "NG",
+      "name": "Nigeria",
+      "flag": "🇳🇬",
+      "slug": "nigeria-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white",
+          "headSizePercent": "60-70%",
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "10MB",
+          "sourceUrl": "https://immigration.gov.ng/",
+          "lastVerified": "2026-08-08"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "EG",
+      "name": "Egypt",
+      "flag": "🇪🇬",
+      "slug": "egypt-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 40,
+          "height": 60,
+          "unit": "mm",
+          "widthInches": "4×6 cm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white",
+          "headSizePercent": "55-70%",
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "10MB",
+          "sourceUrl": "https://www.mfa.gov.eg/",
+          "lastVerified": "2026-08-08"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "PK",
+      "name": "Pakistan",
+      "flag": "🇵🇰",
+      "slug": "pakistan-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#ADD8E6",
+          "bgDescription": "Light blue",
+          "headSizePercent": "60-70%",
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "10MB",
+          "sourceUrl": "https://www.dgip.gov.pk/",
+          "lastVerified": "2026-08-09"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "BD",
+      "name": "Bangladesh",
+      "flag": "🇧🇩",
+      "slug": "bangladesh-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 45,
+          "height": 55,
+          "unit": "mm",
+          "widthInches": "4.5×5.5 cm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white",
+          "headSizePercent": "55-70%",
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "10MB",
+          "sourceUrl": "https://www.dip.gov.bd/",
+          "lastVerified": "2026-08-08"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "LK",
+      "name": "Sri Lanka",
+      "flag": "🇱🇰",
+      "slug": "sri-lanka-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#ADD8E6",
+          "bgDescription": "Light blue",
+          "headSizePercent": "60-70%",
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "5MB",
+          "sourceUrl": "https://www.immigration.gov.lk/",
+          "lastVerified": "2026-08-09"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "NP",
+      "name": "Nepal",
+      "flag": "🇳🇵",
+      "slug": "nepal-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white",
+          "headSizePercent": "60-70%",
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "5MB",
+          "sourceUrl": "https://nepalpassport.gov.np/",
+          "lastVerified": "2026-08-08"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "KE",
+      "name": "Kenya",
+      "flag": "🇰🇪",
+      "slug": "kenya-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white",
+          "headSizePercent": "60-70%",
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "5MB",
+          "sourceUrl": "https://www.immigration.go.ke/",
+          "lastVerified": "2026-08-08"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "GH",
+      "name": "Ghana",
+      "flag": "🇬🇭",
+      "slug": "ghana-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white",
+          "headSizePercent": "60-70%",
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "5MB",
+          "sourceUrl": "https://www.mfa.gov.gh/",
+          "lastVerified": "2026-08-08"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "SE",
+      "name": "Sweden",
+      "flag": "🇸🇪",
+      "slug": "sweden-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#E0E0E0",
+          "bgDescription": "Light grey uniform",
+          "headSizePercent": "70-80%",
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "10MB",
+          "sourceUrl": "https://polisen.se/en/",
+          "lastVerified": "2026-08-10"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "NO",
+      "name": "Norway",
+      "flag": "🇳🇴",
+      "slug": "norway-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#E0E0E0",
+          "bgDescription": "Light grey",
+          "headSizePercent": "70-80%",
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "10MB",
+          "sourceUrl": "https://www.politiet.no/",
+          "lastVerified": "2026-08-10"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "CH",
+      "name": "Switzerland",
+      "flag": "🇨🇭",
+      "slug": "switzerland-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#E8E8E8",
+          "bgDescription": "Light grey to white",
+          "headSizePercent": "70-80%",
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "10MB",
+          "sourceUrl": "https://www.sem.admin.ch/",
+          "lastVerified": "2026-08-10"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "PL",
+      "name": "Poland",
+      "flag": "🇵🇱",
+      "slug": "poland-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#E0E0E0",
+          "bgDescription": "Light grey uniform",
+          "headSizePercent": "70-80%",
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "10MB",
+          "sourceUrl": "https://www.gov.pl/",
+          "lastVerified": "2026-08-10"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "IE",
+      "name": "Ireland",
+      "flag": "🇮🇪",
+      "slug": "ireland-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "White or light grey",
+          "headSizePercent": "60-75%",
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "10MB",
+          "sourceUrl": "https://www.dfa.ie/passports/photo-guidelines/",
+          "lastVerified": "2026-08-10"
+        }
+      ],
+      "popular": false
+    }
+  ],
+  "faq": [
+    {
+      "question": "Can I really just take a casual selfie against any messy wall?",
+      "answer": "Yes, 100%! You don't need a white backdrop, studio lights, or fancy camera equipment. Take a selfie on your phone or webcam from your couch. Our AI automatically detects you, eliminates all background clutter, levels out shadows, and swaps in the exact solid consular backdrop required by your destination country."
+    },
+    {
+      "question": "What if my selfie is tilted, uncentered, or not aligned?",
+      "answer": "Don't worry at all. Our 22-point biometric engine automatically detects your eye baseline, auto-straightens slight head tilt, centers your facial oval, and scales your head height to the exact official millimeter ratio (e.g. 50–69% for US, 70–80% for UK/EU)."
+    },
+    {
+      "question": "Do I need to sign up or provide my personal passport details?",
+      "answer": "No. We believe in total privacy. Zero account creation, zero passwords, and zero personal identity information requested. We only process your photo file, generate your 600 DPI downloads, and automatically purge all files from our servers within 24 hours under TLS 1.3 encryption."
+    },
+    {
+      "question": "Why should I use ApprovaVisa instead of visiting a pharmacy or studio?",
+      "answer": "Driving to a pharmacy or retail studio takes 45+ minutes, costs $15–$25, and often results in awkward or rejected photos. With ApprovaVisa, you get certified ICAO Doc 9303 compliant photos from home in 60 seconds for a fraction of the cost, complete with a 100% Embassy Acceptance Money-Back Guarantee."
+    },
+    {
+      "question": "Will my photo be accepted by the embassy or passport agency?",
+      "answer": "Yes. Every photo is mathematically verified against the official specifications published by immigration authorities (ICAO Doc 9303, US State Dept 22 CFR, UK HMPO, Schengen Visa Code, etc.). If any official agency ever rejects your photo for compliance reasons, we issue an immediate 100% refund."
+    },
+    {
+      "question": "What formats do I receive after certification?",
+      "answer": "You receive a single ultra-high-resolution 600 DPI digital JPEG (calibrated to exact destination millimeter requirements for online consular portal upload) plus a tiled 4×6 inch (10×15 cm) print-ready sheet with cut guides for easy printing at home or any local print kiosk."
+    },
+    {
+      "question": "How fast is delivery?",
+      "answer": "Instant! The moment payment is confirmed, your clean, unwatermarked 600 DPI files are unlocked immediately on screen for one-click download, and can optionally be emailed directly to your inbox."
+    }
+  ]
+}

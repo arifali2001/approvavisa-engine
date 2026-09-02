@@ -1,0 +1,67 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "approvavisa-engine"
+version = "1.0.0"
+description = "Production-grade ICAO Doc 9303 compliant biometric passport photo validation and processing engine"
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.10"
+authors = [{ name = "ApprovaVisa", email = "hello@approvavisa.com" }]
+keywords = ["passport", "photo", "biometric", "icao", "validation", "fastapi"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Framework :: FastAPI",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Topic :: Scientific/Engineering :: Image Processing",
+]
+
+dependencies = [
+    "fastapi>=0.115.0",
+    "uvicorn[standard]>=0.30.0",
+    "pydantic>=2.0.0",
+    "pydantic-settings>=2.0.0",
+    "Pillow>=10.0.0",
+    "numpy>=1.24.0",
+    "opencv-python-headless>=4.8.0",
+    "mediapipe>=0.10.9",
+    "rembg[cpu]>=2.0.50",
+    "scikit-image>=0.21.0",
+    "python-multipart>=0.0.6",
+]
+
+[project.optional-dependencies]
+gpu = ["rembg[gpu]>=2.0.50"]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.23.0",
+    "httpx>=0.27.0",
+    "ruff>=0.5.0",
+    "mypy>=1.10.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/approvavisa/approvavisa-engine"
+Repository = "https://github.com/approvavisa/approvavisa-engine"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/approvavisa_engine"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+
+[tool.ruff]
+target-version = "py310"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "W", "UP"]
+
+[tool.mypy]
+python_version = "3.10"
+strict = true
