@@ -173,36 +173,35 @@ class StandardPhotoProcessor(BasePhotoProcessor):
     def _generate_print_sheet(
         self, photo: np.ndarray, doc_spec: DocumentSpec, dpi: int
     ) -> np.ndarray:
-        """Generate 4x6 inch print sheet with photos and cut guides."""
-        sheet_w = int(4 * dpi)
-        sheet_h = int(6 * dpi)
+        """Generate standard A4 size (210x297 mm) print sheet filled with passport photos in rows and cut guides."""
+        # Standard A4 Paper: 210 x 297 mm
+        sheet_w = int((210 / 25.4) * dpi)
+        sheet_h = int((297 / 25.4) * dpi)
         ph, pw = photo.shape[:2]
 
-        cols = max(1, sheet_w // pw)
-        rows = max(1, sheet_h // ph)
+        top_reserved = int((28 / 25.4) * dpi)
+        bottom_reserved = int((20 / 25.4) * dpi)
+        usable_w = int((190 / 25.4) * dpi)
+        usable_h = sheet_h - top_reserved - bottom_reserved
+
+        cols = max(1, usable_w // pw)
+        rows = max(1, usable_h // ph)
 
         total_w = cols * pw
         total_h = rows * ph
-        offset_x = (sheet_w - total_w) // 2
-        offset_y = (sheet_h - total_h) // 2
+
+        gap_x = max(12, (sheet_w - total_w) // (cols + 1))
+        gap_y = max(12, (usable_h - total_h) // (rows + 1))
 
         sheet = np.full((sheet_h, sheet_w, 3), 255, dtype=np.uint8)
 
         for r in range(rows):
             for c in range(cols):
-                x = offset_x + c * pw
-                y = offset_y + r * ph
+                x = gap_x + c * (pw + gap_x)
+                y = top_reserved + gap_y + r * (ph + gap_y)
                 if x + pw <= sheet_w and y + ph <= sheet_h:
                     sheet[y : y + ph, x : x + pw] = photo
-
-        guide_color = (210, 210, 210)
-        for r in range(rows + 1):
-            y = offset_y + r * ph
-            if 0 <= y < sheet_h:
-                cv2.line(sheet, (offset_x, y), (offset_x + total_w, y), guide_color, 1)
-        for c in range(cols + 1):
-            x = offset_x + c * pw
-            if 0 <= x < sheet_w:
-                cv2.line(sheet, (x, offset_y), (x, offset_y + total_h), guide_color, 1)
+                    # Hairline cut border
+                    cv2.rectangle(sheet, (x - 2, y - 2), (x + pw + 2, y + ph + 2), (180, 190, 200), 2)
 
         return sheet

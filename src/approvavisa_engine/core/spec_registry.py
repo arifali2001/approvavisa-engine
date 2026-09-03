@@ -61,6 +61,8 @@ class JSONSpecRegistry(BaseSpecRegistry):
                         max_file_size=d.get("maxFileSize", "10MB"),
                         source_url=d.get("sourceUrl", ""),
                         last_verified=d.get("lastVerified", ""),
+                        face_height_ratio_min=d.get("faceHeightRatioMin", d.get("face_height_ratio_min")),
+                        face_height_ratio_max=d.get("faceHeightRatioMax", d.get("face_height_ratio_max")),
                     )
                 )
 

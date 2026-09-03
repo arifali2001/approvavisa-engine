@@ -32,8 +32,13 @@ def decode_base64_image(data: str) -> np.ndarray:
     return cv2.cvtColor(arr, cv2.COLOR_RGB2BGR)
 
 
-def encode_image_base64(image: np.ndarray, fmt: str = "JPEG", quality: int = 98) -> str:
-    """Encode a BGR numpy array to a base64 string."""
+def encode_image_base64(
+    image: np.ndarray,
+    fmt: str = "JPEG",
+    quality: int = 98,
+    dpi: int = 600,
+) -> str:
+    """Encode a BGR numpy array to a base64 string with guaranteed metadata stripping and calibrated DPI."""
     pil_img = Image.fromarray(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
 
     buffer = io.BytesIO()
@@ -41,6 +46,9 @@ def encode_image_base64(image: np.ndarray, fmt: str = "JPEG", quality: int = 98)
     if fmt.upper() == "JPEG":
         save_kwargs["quality"] = quality
         save_kwargs["subsampling"] = 0  # 4:4:4 chroma
+        save_kwargs["dpi"] = (dpi, dpi)
+        save_kwargs["exif"] = b""
+        save_kwargs["comment"] = b""
     pil_img.save(buffer, **save_kwargs)
 
     return base64.b64encode(buffer.getvalue()).decode("utf-8")
@@ -62,6 +70,8 @@ def encode_image_bytes(
         if fmt.upper() == "JPEG":
             save_kwargs["quality"] = quality
             save_kwargs["subsampling"] = 0
+            save_kwargs["exif"] = b""
+            save_kwargs["comment"] = b""
         pil_img.save(buffer, **save_kwargs)
         return buffer.getvalue()
 
@@ -73,7 +83,7 @@ def encode_image_bytes(
     while lo <= hi:
         mid = (lo + hi) // 2
         buffer = io.BytesIO()
-        save_kwargs = {"format": fmt, "quality": mid, "subsampling": 0, "dpi": (dpi, dpi)}
+        save_kwargs = {"format": fmt, "quality": mid, "subsampling": 0, "dpi": (dpi, dpi), "exif": b"", "comment": b""}
         pil_img.save(buffer, **save_kwargs)
         result = buffer.getvalue()
 

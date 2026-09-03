@@ -97,10 +97,11 @@ async def process_photo(
             doc_spec,
         )
 
-        # Encode outputs
-        processed_b64 = encode_image_base64(processed_img)
-        preview_b64 = encode_image_base64(preview)
-        print_sheet_b64 = encode_image_base64(result.get("print_sheet", processed_img))
+        # Encode outputs with calibrated consular DPI and stripped metadata
+        target_dpi = output_dpi or doc_spec.dpi or 600
+        processed_b64 = encode_image_base64(processed_img, dpi=target_dpi)
+        preview_b64 = encode_image_base64(preview, dpi=target_dpi)
+        print_sheet_b64 = encode_image_base64(result.get("print_sheet", processed_img), dpi=target_dpi)
 
         encoded = encode_image_base64(processed_img)
         file_size = len(encoded) * 3 // 4  # approximate decoded size

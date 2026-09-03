@@ -151,8 +151,20 @@ class AnnotatedPreviewGenerator(BasePreviewGenerator):
         else:
             head_mm = ((chin_y - crown_y) / h) * doc_spec.height
             eye_mm = ((h - eye_y) / h) * doc_spec.height
-            min_head = int(doc_spec.face_height_ratio_min * doc_spec.height)
-            max_head = int(doc_spec.face_height_ratio_max * doc_spec.height)
+            ratio_min = doc_spec.face_height_ratio_min
+            ratio_max = doc_spec.face_height_ratio_max
+            if ratio_min is None or ratio_max is None:
+                import re
+                match = re.search(r"(\d+)-(\d+)", doc_spec.head_size_percent or "")
+                if match:
+                    ratio_min = float(match.group(1)) / 100.0
+                    ratio_max = float(match.group(2)) / 100.0
+                else:
+                    ratio_min = 0.60
+                    ratio_max = 0.75
+
+            min_head = int(ratio_min * doc_spec.height)
+            max_head = int(ratio_max * doc_spec.height)
             head_label = f"{head_mm:.0f}mm ({min_head}-{max_head}mm)"
             eye_label = f"{eye_mm:.0f}mm ({int(doc_spec.height * 0.56)}mm)"
             frame_label = f"{doc_spec.width}x{doc_spec.height}mm"
