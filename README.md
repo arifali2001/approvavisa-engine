@@ -1,10 +1,15 @@
 # ApprovaVisa Engine
 
+[![Live Website](https://img.shields.io/badge/Live-approvavisa.com-00C853?style=flat&logo=google-chrome&logoColor=white)](https://www.approvavisa.com)
+[![Created by Arif](https://img.shields.io/badge/Created%20by-Arif%20%7C%20Glyphash-6C5CE7)](https://www.glyphash.com)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115+-green.svg)](https://fastapi.tiangolo.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 **Production-grade ICAO Doc 9303 compliant biometric passport photo validation and processing engine.**
+
+> **Live Application**: Running in production at **[www.approvavisa.com](https://www.approvavisa.com)**  
+> **Author**: Created by **Arif**, Founder of **[Glyphash](https://www.glyphash.com)** ([www.glyphash.com](https://www.glyphash.com))
 
 Real computer vision analysis using MediaPipe Face Mesh (468-point 3D landmarks), solvePnP head pose estimation, CIEDE2000 color science, and rembg background removal. Not simulated scores.
 
@@ -45,13 +50,13 @@ pytest tests/ -v
 
 ## API Endpoints
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/v1/health` | Health check |
-| GET | `/v1/specs` | List all supported countries |
-| GET | `/v1/specs/{code}` | Get spec for a country |
-| POST | `/v1/validate` | Validate a photo |
-| POST | `/v1/process` | Process (crop + reformat) a photo |
+| Method | Endpoint             | Description                       |
+| ------ | -------------------- | --------------------------------- |
+| GET    | `/v1/health`       | Health check                      |
+| GET    | `/v1/specs`        | List all supported countries      |
+| GET    | `/v1/specs/{code}` | Get spec for a country            |
+| POST   | `/v1/validate`     | Validate a photo                  |
+| POST   | `/v1/process`      | Process (crop + reformat) a photo |
 
 ### Validate Request
 
@@ -111,6 +116,11 @@ app.dependency_overrides[get_face_analyzer] = lambda: MyFaceAnalyzer()
 ```bash
 docker compose up --build
 ```
+
+## Author & Credits
+
+- **Creator**: **Arif**, Founder of **[Glyphash](https://www.glyphash.com)** ([www.glyphash.com](https://www.glyphash.com))
+- **Live Project**: **[ApprovaVisa](https://www.approvavisa.com)** ([www.approvavisa.com](https://www.approvavisa.com))
 
 ## License
 
