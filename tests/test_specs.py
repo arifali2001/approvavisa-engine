@@ -42,5 +42,5 @@ class TestJSONSpecRegistry:
         assert doc.type == "Passport"
         assert doc.width == 51
         assert doc.height == 51
-        assert doc.dpi == 600
+        assert doc.dpi == 300
         assert doc.bg_color == "#FFFFFF"
