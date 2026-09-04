@@ -1,0 +1,48 @@
+name: Deploy FastAPI Engine to EC2
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: production-deploy
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    name: Deploy to AWS EC2
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER || 'ubuntu' }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          port: ${{ secrets.EC2_PORT || 22 }}
+          script: |
+            set -e
+            echo "==> Deploying ApprovaVisa Engine to EC2..."
+            cd /home/ubuntu/approvavisa-engine
+            
+            echo "==> Fetching latest changes from main..."
+            git fetch origin main
+            git reset --hard origin/main
+            
+            echo "==> Updating Python virtual environment..."
+            source .venv/bin/activate
+            pip install --upgrade pip
+            pip install -e .
+            
+            echo "==> Restarting approvavisa-engine systemd service..."
+            sudo systemctl restart approvavisa-engine
+            
+            sleep 2
+            sudo systemctl status approvavisa-engine --no-pager
+            echo "==> Deployment completed successfully!"
