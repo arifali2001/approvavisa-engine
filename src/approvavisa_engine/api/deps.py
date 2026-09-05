@@ -18,6 +18,9 @@ from approvavisa_engine.core.spec_registry import BaseSpecRegistry, JSONSpecRegi
 from approvavisa_engine.core.validator import BaseValidator, ICAOValidator
 
 # --- Singletons (lazy-initialized) ---
+# Why lazy singletons? Because reloading MediaPipe FaceLandmarker and rembg ONNX sessions
+# on every single HTTP request would turn this microservice into an expensive room heater.
+# We initialize them once, keep the weights warm in memory, and reuse them across requests.
 _spec_registry: BaseSpecRegistry | None = None
 _face_analyzer: BaseFaceAnalyzer | None = None
 _crown_detector: BaseCrownDetector | None = None
@@ -27,7 +30,10 @@ _validator: BaseValidator | None = None
 _processor: BasePhotoProcessor | None = None
 _preview_gen: BasePreviewGenerator | None = None
 
-# API key security schemes (support header, query param for browser testing, and Bearer)
+# API key security schemes
+# We support X-API-Key (production headers), Bearer tokens (OpenAPI/JWT style),
+# and ?api_key= query parameters (because testing base64 payloads in Swagger /docs
+# without query param auth is pure developer torture).
 api_key_header = APIKeyHeader(name="X-API-Key", auto_error=False)
 api_key_query = APIKeyQuery(name="api_key", auto_error=False)
 bearer_scheme = HTTPBearer(auto_error=False)

@@ -115,13 +115,20 @@ class StandardPhotoProcessor(BasePhotoProcessor):
         desired_eye_y_from_top = int(crop_h * 0.431)
         crop_y = eye_y - desired_eye_y_from_top
 
-        # ── 5. True Visual Head Centering (Competitor Matching) ──
-        # Centering on the head bounding box center (face_x + face_w // 2) guarantees
-        # balanced left and right margins, even when the subject is angled or turned.
+        # ── 5. True Visual Head Centering ──
+        # Rookie mistake in passport photo cropping: centering on the nose tip or eye midpoint.
+        # If someone turns their head even 3 degrees, nose-centering shoves their entire skull
+        # to one side, leaving one ear squished against the crop edge like a pressed ham.
+        # Centering on the full head bounding box (face_x + face_w // 2) guarantees
+        # balanced left and right margins, even on angled or turned poses.
         head_center_x = face_result.face_x + face_result.face_w // 2
         crop_x = head_center_x - crop_w // 2
 
-        # ── 6. Canvas Padding & Torso Extension ──
+        # ── 6. Canvas Padding & Seamless Torso Extension ──
+        # What happens when a user uploads a photo cropped tightly at the collarbone?
+        # Without torso extension, the bottom of the passport photo shows an awkward white gap,
+        # making the applicant look like a floating decapitated head.
+        # We gently extrude the bottom clothing pixel slice downward to the canvas border.
         pad_left = max(0, -crop_x)
         pad_top = max(0, -crop_y)
         pad_right = max(0, (crop_x + crop_w) - w)
@@ -134,7 +141,7 @@ class StandardPhotoProcessor(BasePhotoProcessor):
         # Place the subject on the padded canvas
         canvas[pad_top : pad_top + h, pad_left : pad_left + w] = isolated
 
-        # Torso extension: extend clothing to the bottom frame (no white gap)
+        # Torso extension: extend clothing to the bottom frame (no floating heads allowed!)
         if pad_bottom > 0:
             bottom_row = isolated[-1:, :]
             for r in range(pad_bottom):

@@ -43,7 +43,13 @@ class OpenCVQualityAnalyzer(BaseImageQualityAnalyzer):
         h, w = gray.shape[:2]
         megapixels = (h * w) / 1_000_000
 
-        # --- Blur Detection (Laplacian Variance) ---
+        # --- Blur Detection (Laplacian Variance with Adaptive Megapixel Scaling) ---
+        # The classic computer vision tutorial trap: "Laplacian variance < 100 = blurry!"
+        # If you run that naive rule on a crisp 12MP iPhone selfie with smooth baby skin,
+        # the lack of sharp pores makes the algorithm swear the camera was out of focus.
+        # Meanwhile, a grainy 480p webcam photo from 2007 passes with flying colors because
+        # the sensor noise registers as "sharp edges".
+        # We scale blur_thresh adaptively based on resolution so good cameras don't get punished.
         lap = cv2.Laplacian(gray, cv2.CV_64F)
         report.blur_score = float(lap.var())
 

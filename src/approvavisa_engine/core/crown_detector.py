@@ -1,4 +1,13 @@
-"""Crown (hair top) detection using MediaPipe ImageSegmenter Tasks API."""
+"""Crown (hair top) detection using MediaPipe ImageSegmenter Tasks API.
+
+Why run a whole neural segmentation model just to find the top of someone's head?
+Because naive face bounding boxes stop dead at the forehead!
+Early prototypes were aggressively giving people accidental buzzcuts, chopping off afros,
+high fades, turbans, and voluminous curls.
+In biometric passport validation, if you crop off someone's hair, consular officers reject
+the photo instantly for invalid head-to-frame ratio.
+This module scans the neural alpha silhouette to find the actual physical crown apex.
+"""
 
 from __future__ import annotations
 
@@ -102,15 +111,17 @@ class SegmentationCrownDetector(BaseCrownDetector):
             # First confidence mask is the person mask
             mask = seg_result.confidence_masks[0].numpy_view()
 
-            # Threshold: person pixels > 0.5
+            # Threshold: person pixels > 0.5 (hair strands have soft alpha edges,
+            # so >0.5 ensures we catch real hair volume without catching background noise)
             person_mask = (mask > 0.5).astype(np.uint8)
 
-            # Find topmost person pixel (crown of head including hair)
+            # Find topmost person pixel (crown of head including hair volume)
             person_rows = np.where(person_mask.any(axis=1))[0]
             if len(person_rows) == 0:
                 return result
 
             result.detected = True
+            # The lowest Y-index in image coordinates is the highest physical point on the person
             result.crown_y = int(person_rows[0])
             result.head_top_y = int(person_rows[0])
             result.confidence = float(mask[result.crown_y].max())

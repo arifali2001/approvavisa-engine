@@ -1,4 +1,11 @@
-"""FastAPI application factory with lifespan management."""
+"""FastAPI application factory with lifespan management.
+
+Welcome to the engine room of ApprovaVisa.
+This FastAPI service orchestrates MediaPipe Tasks, OpenCV solvePnP 3D pose estimation,
+Rembg neural matting, and 22 ICAO biometric checks without melting your server or blowing up your RAM.
+Built with clean dependency injection so you can swap out any CV component without
+having an emotional breakdown in the REST layer.
+"""
 
 from __future__ import annotations
 

@@ -1,4 +1,12 @@
-"""Background removal and analysis engine."""
+"""Background removal and analysis engine.
+
+Whoever claims background removal is "just calling rembg.remove()" has clearly never tested
+a photo of someone with frizzy curly hair standing against textured wallpaper.
+Standard neural matting leaves disgusting muddy halos and turns flyaway hair into plastic Lego blocks.
+This module pairs IS-Net general use with a custom 3-stage guided filter, mathematical
+un-premultiplication defringing, and CIEDE2000 colorimetry to ensure the subject looks
+like they posed in an actual professional consular studio, not pasted in MS Paint.
+"""
 
 from __future__ import annotations
 
@@ -88,10 +96,10 @@ class RembgBackgroundEngine(BaseBackgroundEngine):
         h, w = alpha.shape[:2]
 
         # Stage 1: Guided filter for edge-preserving alpha smoothing
-        # Note from Arif: DO NOT touch eps=0.005 or radius scaling!
-        # I spent 3 sleepless nights and ~50 cups of coffee tuning these two values on
-        # curly hair, frizzy flyaways, and blurry ears. Anything higher turns fine hair
-        # into a block of cardboard; anything lower leaves hideous gray halos around shoulders.
+        # DO NOT touch eps=0.005 or radius scaling unless you want to re-live 3 sleepless nights
+        # and ~50 cups of coffee.
+        # Tuned on curly hair, frizzy flyaways, and blurry ears.
+        # Anything higher turns fine hair into a block of cardboard; anything lower leaves hideous gray halos.
         gray_guide = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         alpha_f = alpha.astype(np.float32) / 255.0
         gray_f = gray_guide.astype(np.float32) / 255.0
@@ -142,7 +150,7 @@ class RembgBackgroundEngine(BaseBackgroundEngine):
     ) -> np.ndarray:
         """Remove color contamination (dark fringing) from semi-transparent edge pixels.
 
-        Note from Arif: Defringing semi-transparent borders is pure black magic.
+        Defringing semi-transparent borders is borderline dark wizardry.
         Without this inverse alpha un-premultiplication, dark hair on a clean white backdrop
         looks like a jagged PS2 video game sprite cutout. Tested on 500+ passport photos to get right.
         """
@@ -256,6 +264,10 @@ class RembgBackgroundEngine(BaseBackgroundEngine):
         result.dominant_color_rgb = (int(median_rgb[0]), int(median_rgb[1]), int(median_rgb[2]))
 
         bg_lab = rgb_to_lab(result.dominant_color_rgb)
+        # Why CIEDE2000 instead of standard Euclidean distance in RGB?
+        # Because the human eye (and consular officers) perceive shifts in warm tones,
+        # creams, and off-whites non-linearly. Euclidean RGB distance would falsely pass
+        # a greenish-gray wall as "white". CIEDE2000 in Lab space matches human perceptual biology.
         result.delta_e = ciede2000_delta_e(target_lab, bg_lab)
 
         lab_img = cv2.cvtColor(image, cv2.COLOR_BGR2Lab)
