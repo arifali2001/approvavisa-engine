@@ -108,7 +108,7 @@ class AnnotatedPreviewGenerator(BasePreviewGenerator):
         draw.text((sx0, sy0 - 2), sample_text, fill=(200, 30, 30, 240), font=font_sample)
 
         # Subtext under sample: ICAO SPECIMEN
-        sub_txt = "ICAO 9303 SPECIMEN"
+        sub_txt = "AAMC MyERAS SPECIMEN" if "ERAS" in getattr(doc_spec, "type", "") else "ICAO 9303 SPECIMEN"
         try:
             sub_b = font_sub.getbbox(sub_txt)
             sub_w = sub_b[2] - sub_b[0]
@@ -140,35 +140,57 @@ class AnnotatedPreviewGenerator(BasePreviewGenerator):
         draw.line([(br1_x - 8, crown_y), (br1_x + 8, crown_y)], fill=GREEN, width=2)
         draw.line([(br1_x - 8, chin_y), (br1_x + 8, chin_y)], fill=GREEN, width=2)
 
-        is_inches = doc_spec.width <= 3.0 or "in" in (doc_spec.width_inches or "")
-        if is_inches:
-            head_val = ((chin_y - crown_y) / h) * 2.0
-            head_label = f"{head_val:.2f}in (1.00-1.38in)"
-            eye_val = ((h - eye_y) / h) * 2.0
-            eye_label = f"{eye_val:.2f}in (1.12-1.38in)"
-            frame_label = f"{doc_spec.width_inches or '2.0in'} ({doc_spec.width:.0f}mm)"
-            lh_label = doc_spec.width_inches or "2.0in"
+        # Determine units & heights accurately for any document (inches or mm)
+        is_inches = doc_spec.unit == "inches" or "in" in (doc_spec.width_inches or "").lower() or (doc_spec.width <= 4.0 and doc_spec.height <= 5.0)
+        if doc_spec.unit == "inches":
+            doc_h_in = float(doc_spec.height)
+            doc_w_in = float(doc_spec.width)
+            doc_h_mm = doc_h_in * 25.4
+            doc_w_mm = doc_w_in * 25.4
+        elif doc_spec.height > 10.0:  # height given in mm
+            doc_h_mm = float(doc_spec.height)
+            doc_w_mm = float(doc_spec.width)
+            doc_h_in = doc_h_mm / 25.4
+            doc_w_in = doc_w_mm / 25.4
         else:
-            head_mm = ((chin_y - crown_y) / h) * doc_spec.height
-            eye_mm = ((h - eye_y) / h) * doc_spec.height
-            ratio_min = doc_spec.face_height_ratio_min
-            ratio_max = doc_spec.face_height_ratio_max
-            if ratio_min is None or ratio_max is None:
-                import re
-                match = re.search(r"(\d+)-(\d+)", doc_spec.head_size_percent or "")
-                if match:
-                    ratio_min = float(match.group(1)) / 100.0
-                    ratio_max = float(match.group(2)) / 100.0
-                else:
-                    ratio_min = 0.60
-                    ratio_max = 0.75
+            doc_h_in = float(doc_spec.height)
+            doc_w_in = float(doc_spec.width)
+            doc_h_mm = doc_h_in * 25.4
+            doc_w_mm = doc_w_in * 25.4
 
-            min_head = int(ratio_min * doc_spec.height)
-            max_head = int(ratio_max * doc_spec.height)
+        import re
+        ratio_min = doc_spec.face_height_ratio_min
+        ratio_max = doc_spec.face_height_ratio_max
+        if ratio_min is None or ratio_max is None:
+            match = re.search(r"(\d+)-(\d+)", doc_spec.head_size_percent or "")
+            if match:
+                ratio_min = float(match.group(1)) / 100.0
+                ratio_max = float(match.group(2)) / 100.0
+            else:
+                ratio_min = 0.50
+                ratio_max = 0.70
+
+        if is_inches and (doc_h_in <= 5.0):
+            head_val = ((chin_y - crown_y) / h) * doc_h_in
+            min_in = doc_h_in * ratio_min
+            max_in = doc_h_in * ratio_max
+            head_label = f"{head_val:.2f}in ({min_in:.2f}-{max_in:.2f}in)"
+
+            eye_val = ((h - eye_y) / h) * doc_h_in
+            eye_target = doc_h_in * 0.56
+            eye_label = f"{eye_val:.2f}in ({eye_target:.2f}in)"
+
+            frame_label = doc_spec.width_inches or f"{doc_w_in:.1f}x{doc_h_in:.1f} in ({doc_w_mm:.0f}x{doc_h_mm:.0f}mm)"
+            lh_label = f"{doc_h_in:.1f} in"
+        else:
+            head_mm = ((chin_y - crown_y) / h) * doc_h_mm
+            eye_mm = ((h - eye_y) / h) * doc_h_mm
+            min_head = int(ratio_min * doc_h_mm)
+            max_head = int(ratio_max * doc_h_mm)
             head_label = f"{head_mm:.0f}mm ({min_head}-{max_head}mm)"
-            eye_label = f"{eye_mm:.0f}mm ({int(doc_spec.height * 0.56)}mm)"
-            frame_label = f"{doc_spec.width}x{doc_spec.height}mm"
-            lh_label = f"{doc_spec.height}mm"
+            eye_label = f"{eye_mm:.0f}mm ({int(doc_h_mm * 0.56)}mm)"
+            frame_label = f"{doc_w_mm:.0f}x{doc_h_mm:.0f}mm"
+            lh_label = f"{doc_h_mm:.0f}mm"
 
         try:
             hb = font_pill.getbbox(head_label)

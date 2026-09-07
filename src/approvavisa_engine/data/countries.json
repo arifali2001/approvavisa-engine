@@ -708,6 +708,23 @@
           "maxFileSize": "0MB",
           "sourceUrl": "https://travel.state.gov/content/travel/en/us-visas/visa-information-resources/photos.html",
           "lastVerified": "2026-08-15"
+        },
+        {
+          "type": "Medical Residency (ERAS)",
+          "width": 64,
+          "height": 89,
+          "unit": "mm",
+          "widthInches": "2.5×3.5 inches (64×89 mm)",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white background",
+          "headSizePercent": "50-70%",
+          "faceHeightRatioMin": 0.5,
+          "faceHeightRatioMax": 0.7,
+          "dpi": 150,
+          "fileFormat": "JPEG",
+          "maxFileSize": "150KB",
+          "sourceUrl": "https://students-residents.aamc.org/applying-residencies-eras/publication-chapters/eras-photo-tool",
+          "lastVerified": "2026-09-07"
         }
       ],
       "popular": true
