@@ -126,6 +126,23 @@ class ICAOValidator(BaseValidator):
 
         # --- Run all analysis pipelines ---
         face_result = self._face.analyze(image)
+        if not face_result.detected or face_result.face_count != 1:
+            reason = "No face detected." if not face_result.detected else "More than one face detected."
+            return ValidationResult(
+                compliant=False, score=0,
+                country=CountryInfo(code=country_code, name=country_name, flag=country_flag,
+                    documentType=document_type, widthInches=doc_spec.width_inches,
+                    widthMm=doc_spec.width, heightMm=doc_spec.height, dpi=doc_spec.dpi,
+                    bgColor=doc_spec.bg_color, bgDescription=doc_spec.bg_description),
+                metrics=MetricsInfo(eyeLevelMm=0, headHeightPercent=0, backgroundDeltaE=0,
+                    opticalYawDegrees=0, opticalPitchDegrees=0, exposureEv=0, aspectRatio=w / h),
+                checks=[ValidationCheck(id="face_detection", name="Single visible face",
+                    pillar="03 Facial Biometrics", passed=False, score=0,
+                    measured=reason, required="Exactly one clearly visible face",
+                    feedback="Retake with one clearly visible face looking toward the camera.")],
+                retakeCoaching=[reason + " Retake with one clearly visible face."],
+                certificateId="", timestamp=time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+            )
         crown_result = self._crown.detect_crown(image)
         quality_report = self._quality.analyze(
             image,
@@ -606,9 +623,8 @@ class ICAOValidator(BaseValidator):
         coaching = []
         if compliant:
             coaching = [
-                f"Photo approved for official consular submission (Acceptance Likelihood: 99.4%).",
-                f"Background color and shadows will be automatically calibrated to {doc_spec.bg_description} standards.",
-                f"Facial geometry, baseline, and {doc_spec.dpi} DPI resolution are locked for submission.",
+                "Automated assessment complete. Final acceptance is decided by the receiving authority.",
+                "Review the individual measurements and the rules for your application route.",
             ]
         else:
             if not face_result.detected:
@@ -664,6 +680,6 @@ class ICAOValidator(BaseValidator):
             ),
             checks=checks,
             retakeCoaching=coaching,
-            certificateId=certificate_id,
+            certificateId=certificate_id if compliant else "",
             timestamp=time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         )

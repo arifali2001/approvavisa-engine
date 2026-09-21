@@ -84,7 +84,10 @@ async def validate_photo(
             country_flag=country.flag,
         )
 
-        # Generate processed image and bake biometric measuring units & light PREVIEW watermark
+        if not result.compliant:
+            return result
+
+        # A failed audit must never generate a seemingly certified specimen.
         try:
             proc_res = processor.process(
                 image=image,

@@ -61,6 +61,12 @@ async def process_photo(
 
     # Process
     try:
+        input_audit = validator.validate(
+            image=image, country_code=country.code, document_type=request.document_type,
+            doc_spec=doc_spec, country_name=country.name, country_flag=country.flag,
+        )
+        if not input_audit.compliant:
+            return ProcessResult(success=False, message="Photo did not pass assessment. Retake and validate again.")
         output_dpi = request.output_dpi or doc_spec.dpi
         max_kb = request.max_file_size_kb
 
@@ -89,6 +95,9 @@ async def process_photo(
             country_name=country.name,
             country_flag=country.flag,
         )
+
+        if not validation.compliant:
+            return ProcessResult(success=False, message="Processed photo failed assessment. No output was released.")
 
         # Generate preview
         preview = preview_gen.generate(
