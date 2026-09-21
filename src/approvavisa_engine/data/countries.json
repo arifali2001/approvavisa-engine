@@ -21,7 +21,21 @@
           "fileFormat": "JPEG",
           "maxFileSize": "3MB",
           "sourceUrl": "https://www.passports.gov.au/passport-photos",
-          "lastVerified": "2026-08-15"
+          "lastVerified": "2026-08-15",
+          "authorityName": "Australian Passport Office",
+          "applicationRoute": "Supply two good-quality printed photos with the passport application.",
+          "photoAgeRule": "Photos must be less than six months old.",
+          "glassesPolicy": "Remove glasses unless medically unable to do so; a medical exception requires visible eyes and no lens reflections.",
+          "headCoveringPolicy": "A usual religious head covering may be worn if plain and unpatterned, with the whole face and both facial edges visible.",
+          "expressionPolicy": "People over three must face the camera with eyes open and a neutral expression.",
+          "childrenNotes": "Children under three may have an open mouth; no other person may appear in the photo.",
+          "authorityRejectionReasons": [
+            "Retouching or skin smoothing.",
+            "Shadows or reflections.",
+            "A tilted head or hair obscuring the face.",
+            "Printing lines or streaks."
+          ],
+          "sourceCheckedOn": "2026-09-20"
         },
         {
           "type": "Visa",
@@ -64,7 +78,21 @@
           "fileFormat": "JPEG",
           "maxFileSize": "5MB",
           "sourceUrl": "https://www.canada.ca/en/immigration-refugees-citizenship/services/canadian-passports/photos.html",
-          "lastVerified": "2026-08-15"
+          "lastVerified": "2026-08-15",
+          "authorityName": "Immigration, Refugees and Citizenship Canada",
+          "applicationRoute": "In-person and mail applications use printed photos; online renewals use a digital photo. A commercial photographer must take the photo.",
+          "photoAgeRule": "Taken no more than six months before the application is submitted.",
+          "glassesPolicy": "Glasses are permitted if the eyes are visible and lenses have no glare; tinted glasses are not accepted.",
+          "headCoveringPolicy": "Daily religious or medical head coverings are permitted with the full face visible and no facial shadows.",
+          "expressionPolicy": "Look at the camera with eyes open, mouth closed, and no smile or frown.",
+          "childrenNotes": "Newborns may show a range of facial expressions; hands must not appear in the photo.",
+          "digitalUploadNotes": "Online renewal photos must be JPEG, 1200–3000 pixels wide by 1800–4500 pixels high, and 200 KB–5 MB. Scans and altered images are not accepted.",
+          "authorityRejectionReasons": [
+            "Image alterations, including background changes.",
+            "White clothing that blends into the background.",
+            "Shadows or glare."
+          ],
+          "sourceCheckedOn": "2026-09-20"
         },
         {
           "type": "Visa",
@@ -177,6 +205,7 @@
       "name": "Germany",
       "flag": "🇩🇪",
       "slug": "germany-passport-photo",
+      "regulatoryNotice": "Updated as per 2026 German Biometric Rules (Passgesetz Reform): 35×45 mm size, 70–80% face ratio (32–36 mm), eye line 29–35 mm from bottom, uniform light grey background (#E5E7EB), and strict prohibition of eyeglasses. Fully approved for German Schengen (Type C) and National (Type D) visa submissions worldwide via German Consulates, Embassies, VFS Global, and VisaMetric.",
       "documents": [
         {
           "type": "Passport",
@@ -184,16 +213,16 @@
           "height": 45,
           "unit": "mm",
           "widthInches": "35×45 mm",
-          "bgColor": "#F4F4F4",
-          "bgDescription": "Plain light gray background",
-          "headSizePercent": "70-80%",
+          "bgColor": "#E5E7EB",
+          "bgDescription": "Uniform light grey background (hellgrau — strictly not white)",
+          "headSizePercent": "70-80% (32–36 mm)",
           "faceHeightRatioMin": 0.7,
           "faceHeightRatioMax": 0.8,
           "dpi": 600,
           "fileFormat": "JPEG",
-          "maxFileSize": "0MB",
-          "sourceUrl": "https://www.bmi.bund.de/SharedDocs/faqs/EN/themen/passport/photo-requirements/photo-requirements-node.html",
-          "lastVerified": "2026-08-15"
+          "maxFileSize": "9MB",
+          "sourceUrl": "https://www.bmi.bund.de/SharedDocs/downloads/DE/veroeffentlichungen/themen/moderne-verwaltung/ausweise/passbild-schablone.html",
+          "lastVerified": "2026-09-05"
         },
         {
           "type": "Visa",
@@ -201,16 +230,16 @@
           "height": 45,
           "unit": "mm",
           "widthInches": "35×45 mm",
-          "bgColor": "#F4F4F4",
-          "bgDescription": "Plain light gray background",
-          "headSizePercent": "70-80%",
+          "bgColor": "#E5E7EB",
+          "bgDescription": "Uniform light grey background (hellgrau — strictly not white)",
+          "headSizePercent": "70-80% (32–36 mm)",
           "faceHeightRatioMin": 0.7,
           "faceHeightRatioMax": 0.8,
           "dpi": 600,
           "fileFormat": "JPEG",
-          "maxFileSize": "0MB",
-          "sourceUrl": "https://www.schengenvisainfo.com/photo-requirements/",
-          "lastVerified": "2026-08-15"
+          "maxFileSize": "9MB",
+          "sourceUrl": "https://www.auswaertiges-amt.de/en/visa-service",
+          "lastVerified": "2026-09-05"
         }
       ],
       "popular": true
@@ -253,6 +282,23 @@
           "fileFormat": "JPEG",
           "maxFileSize": "0MB",
           "sourceUrl": "https://indianvisaonline.gov.in/evisa/PhotoGuidelines",
+          "lastVerified": "2026-08-15"
+        },
+        {
+          "type": "OCI Card",
+          "width": 51,
+          "height": 51,
+          "unit": "mm",
+          "widthInches": "2×2 in (51×51 mm)",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white background",
+          "headSizePercent": "50-70%",
+          "faceHeightRatioMin": 0.5,
+          "faceHeightRatioMax": 0.7,
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "0MB",
+          "sourceUrl": "https://ociservices.gov.in/PhotoSpecifications",
           "lastVerified": "2026-08-15"
         }
       ],
@@ -716,15 +762,15 @@
           "unit": "mm",
           "widthInches": "2.5×3.5 inches (64×89 mm)",
           "bgColor": "#FFFFFF",
-          "bgDescription": "Plain white background",
+          "bgDescription": "Plain white or clinical light neutral background",
           "headSizePercent": "50-70%",
           "faceHeightRatioMin": 0.5,
           "faceHeightRatioMax": 0.7,
           "dpi": 150,
           "fileFormat": "JPEG",
           "maxFileSize": "150KB",
-          "sourceUrl": "https://students-residents.aamc.org/applying-residencies-eras/publication-chapters/eras-photo-tool",
-          "lastVerified": "2026-09-07"
+          "sourceUrl": "https://students-residents.aamc.org/applying-residencies-eras/publication-chapters/photo",
+          "lastVerified": "2026-08-15"
         }
       ],
       "popular": true
@@ -2383,6 +2429,2266 @@
           "maxFileSize": "2MB",
           "sourceUrl": "https://evisa.xuatnhapcanh.gov.vn/",
           "lastVerified": "2026-08-15"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "AR",
+      "name": "Argentina",
+      "flag": "🇦🇷",
+      "slug": "argentina-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 40,
+          "height": 40,
+          "unit": "mm",
+          "widthInches": "40×40 mm (4×4 cm)",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white background",
+          "headSizePercent": "70-80%",
+          "faceHeightRatioMin": 0.7,
+          "faceHeightRatioMax": 0.8,
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "3MB",
+          "sourceUrl": "https://www.argentina.gob.ar/interior/pasaporte",
+          "lastVerified": "2026-09-15"
+        },
+        {
+          "type": "Visa",
+          "width": 40,
+          "height": 40,
+          "unit": "mm",
+          "widthInches": "40×40 mm (4×4 cm)",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white background",
+          "headSizePercent": "70-80%",
+          "faceHeightRatioMin": 0.7,
+          "faceHeightRatioMax": 0.8,
+          "dpi": 300,
+          "fileFormat": "JPEG",
+          "maxFileSize": "3MB",
+          "sourceUrl": "https://www.cancilleria.gob.ar/es/servicios/visas",
+          "lastVerified": "2026-09-15"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "CL",
+      "name": "Chile",
+      "flag": "🇨🇱",
+      "slug": "chile-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 45,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "45×45 mm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white background",
+          "headSizePercent": "70-80%",
+          "faceHeightRatioMin": 0.7,
+          "faceHeightRatioMax": 0.8,
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "3MB",
+          "sourceUrl": "https://www.registrocivil.cl/portal-registro-civil/",
+          "lastVerified": "2026-09-15"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "PE",
+      "name": "Peru",
+      "flag": "🇵🇪",
+      "slug": "peru-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white background",
+          "headSizePercent": "70-80%",
+          "faceHeightRatioMin": 0.7,
+          "faceHeightRatioMax": 0.8,
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "3MB",
+          "sourceUrl": "https://www.gob.pe/migraciones",
+          "lastVerified": "2026-09-15"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "VE",
+      "name": "Venezuela",
+      "flag": "🇻🇪",
+      "slug": "venezuela-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white background",
+          "headSizePercent": "70-80%",
+          "faceHeightRatioMin": 0.7,
+          "faceHeightRatioMax": 0.8,
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "3MB",
+          "sourceUrl": "http://www.saime.gob.ve/",
+          "lastVerified": "2026-09-15"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "EC",
+      "name": "Ecuador",
+      "flag": "🇪🇨",
+      "slug": "ecuador-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white background",
+          "headSizePercent": "70-80%",
+          "faceHeightRatioMin": 0.7,
+          "faceHeightRatioMax": 0.8,
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "3MB",
+          "sourceUrl": "https://www.registrocivil.gob.ec/",
+          "lastVerified": "2026-09-15"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "CU",
+      "name": "Cuba",
+      "flag": "🇨🇺",
+      "slug": "cuba-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 45,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "45×45 mm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white background",
+          "headSizePercent": "70-80%",
+          "faceHeightRatioMin": 0.7,
+          "faceHeightRatioMax": 0.8,
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "3MB",
+          "sourceUrl": "http://misiones.minrex.gob.cu/",
+          "lastVerified": "2026-09-15"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "DO",
+      "name": "Dominican Republic",
+      "flag": "🇩🇴",
+      "slug": "dominican-republic-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 50,
+          "height": 50,
+          "unit": "mm",
+          "widthInches": "50×50 mm (2×2 in)",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white background",
+          "headSizePercent": "50-69%",
+          "faceHeightRatioMin": 0.5,
+          "faceHeightRatioMax": 0.69,
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "3MB",
+          "sourceUrl": "https://pasaportes.gob.do/",
+          "lastVerified": "2026-09-15"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "GT",
+      "name": "Guatemala",
+      "flag": "🇬🇹",
+      "slug": "guatemala-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white background",
+          "headSizePercent": "70-80%",
+          "faceHeightRatioMin": 0.7,
+          "faceHeightRatioMax": 0.8,
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "3MB",
+          "sourceUrl": "https://igm.gob.gt/",
+          "lastVerified": "2026-09-15"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "HN",
+      "name": "Honduras",
+      "flag": "🇭🇳",
+      "slug": "honduras-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 50,
+          "height": 50,
+          "unit": "mm",
+          "widthInches": "50×50 mm (2×2 in)",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white background",
+          "headSizePercent": "50-69%",
+          "faceHeightRatioMin": 0.5,
+          "faceHeightRatioMax": 0.69,
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "3MB",
+          "sourceUrl": "https://inm.gob.hn/",
+          "lastVerified": "2026-09-15"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "CR",
+      "name": "Costa Rica",
+      "flag": "🇨🇷",
+      "slug": "costa-rica-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 50,
+          "height": 50,
+          "unit": "mm",
+          "widthInches": "50×50 mm (2×2 in)",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white background",
+          "headSizePercent": "50-69%",
+          "faceHeightRatioMin": 0.5,
+          "faceHeightRatioMax": 0.69,
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "3MB",
+          "sourceUrl": "https://migracion.go.cr/",
+          "lastVerified": "2026-09-15"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "PA",
+      "name": "Panama",
+      "flag": "🇵🇦",
+      "slug": "panama-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white background",
+          "headSizePercent": "70-80%",
+          "faceHeightRatioMin": 0.7,
+          "faceHeightRatioMax": 0.8,
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "3MB",
+          "sourceUrl": "https://pasaportes.gob.pa/",
+          "lastVerified": "2026-09-15"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "JM",
+      "name": "Jamaica",
+      "flag": "🇯🇲",
+      "slug": "jamaica-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white background",
+          "headSizePercent": "70-80%",
+          "faceHeightRatioMin": 0.7,
+          "faceHeightRatioMax": 0.8,
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "3MB",
+          "sourceUrl": "https://www.pica.gov.jm/passport/photo-requirements",
+          "lastVerified": "2026-09-15"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "TT",
+      "name": "Trinidad and Tobago",
+      "flag": "🇹🇹",
+      "slug": "trinidad-and-tobago-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white background",
+          "headSizePercent": "70-80%",
+          "faceHeightRatioMin": 0.7,
+          "faceHeightRatioMax": 0.8,
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "3MB",
+          "sourceUrl": "https://nationalsecurity.gov.tt/divisions/immigrationdivision/",
+          "lastVerified": "2026-09-15"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "UY",
+      "name": "Uruguay",
+      "flag": "🇺🇾",
+      "slug": "uruguay-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white background",
+          "headSizePercent": "70-80%",
+          "faceHeightRatioMin": 0.7,
+          "faceHeightRatioMax": 0.8,
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "3MB",
+          "sourceUrl": "https://www.gub.uy/tramites/obtencion-pasaporte-comun-primera-vez",
+          "lastVerified": "2026-09-15"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "PY",
+      "name": "Paraguay",
+      "flag": "🇵🇾",
+      "slug": "paraguay-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white background",
+          "headSizePercent": "70-80%",
+          "faceHeightRatioMin": 0.7,
+          "faceHeightRatioMax": 0.8,
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "3MB",
+          "sourceUrl": "https://www.migraciones.gov.py/",
+          "lastVerified": "2026-09-15"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "BO",
+      "name": "Bolivia",
+      "flag": "🇧🇴",
+      "slug": "bolivia-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 40,
+          "height": 40,
+          "unit": "mm",
+          "widthInches": "40×40 mm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white background",
+          "headSizePercent": "70-80%",
+          "faceHeightRatioMin": 0.7,
+          "faceHeightRatioMax": 0.8,
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "3MB",
+          "sourceUrl": "https://www.migracion.gob.bo/",
+          "lastVerified": "2026-09-15"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "PT",
+      "name": "Portugal",
+      "flag": "🇵🇹",
+      "slug": "portugal-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white background",
+          "headSizePercent": "70-80%",
+          "faceHeightRatioMin": 0.7,
+          "faceHeightRatioMax": 0.8,
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "3MB",
+          "sourceUrl": "https://justica.gov.pt/Servicos/Pedir-Passaporte-Eletronico-Portugues",
+          "lastVerified": "2026-09-15"
+        },
+        {
+          "type": "Visa",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain light gray or white background",
+          "headSizePercent": "70-80%",
+          "faceHeightRatioMin": 0.7,
+          "faceHeightRatioMax": 0.8,
+          "dpi": 300,
+          "fileFormat": "JPEG",
+          "maxFileSize": "3MB",
+          "sourceUrl": "https://vistos.mne.gov.pt/",
+          "lastVerified": "2026-09-15"
+        }
+      ],
+      "popular": true
+    },
+    {
+      "code": "GR",
+      "name": "Greece",
+      "flag": "🇬🇷",
+      "slug": "greece-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white or light gray background",
+          "headSizePercent": "70-80%",
+          "faceHeightRatioMin": 0.7,
+          "faceHeightRatioMax": 0.8,
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "3MB",
+          "sourceUrl": "http://www.passport.gov.gr/",
+          "lastVerified": "2026-09-15"
+        }
+      ],
+      "popular": true
+    },
+    {
+      "code": "CZ",
+      "name": "Czech Republic",
+      "flag": "🇨🇿",
+      "slug": "czech-republic-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#F4F4F4",
+          "bgDescription": "Plain light gray or white background",
+          "headSizePercent": "70-80%",
+          "faceHeightRatioMin": 0.7,
+          "faceHeightRatioMax": 0.8,
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "3MB",
+          "sourceUrl": "https://www.mvcr.cz/",
+          "lastVerified": "2026-09-15"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "HU",
+      "name": "Hungary",
+      "flag": "🇭🇺",
+      "slug": "hungary-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white background",
+          "headSizePercent": "70-80%",
+          "faceHeightRatioMin": 0.7,
+          "faceHeightRatioMax": 0.8,
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "3MB",
+          "sourceUrl": "https://nyilvantarto.hu/",
+          "lastVerified": "2026-09-15"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "RO",
+      "name": "Romania",
+      "flag": "🇷🇴",
+      "slug": "romania-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white background",
+          "headSizePercent": "70-80%",
+          "faceHeightRatioMin": 0.7,
+          "faceHeightRatioMax": 0.8,
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "3MB",
+          "sourceUrl": "https://pasapoarte.mai.gov.ro/",
+          "lastVerified": "2026-09-15"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "HR",
+      "name": "Croatia",
+      "flag": "🇭🇷",
+      "slug": "croatia-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white background",
+          "headSizePercent": "70-80%",
+          "faceHeightRatioMin": 0.7,
+          "faceHeightRatioMax": 0.8,
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "3MB",
+          "sourceUrl": "https://mup.gov.hr/",
+          "lastVerified": "2026-09-15"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "BG",
+      "name": "Bulgaria",
+      "flag": "🇧🇬",
+      "slug": "bulgaria-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white background",
+          "headSizePercent": "70-80%",
+          "faceHeightRatioMin": 0.7,
+          "faceHeightRatioMax": 0.8,
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "3MB",
+          "sourceUrl": "https://www.mvr.bg/",
+          "lastVerified": "2026-09-15"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "DK",
+      "name": "Denmark",
+      "flag": "🇩🇰",
+      "slug": "denmark-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white background",
+          "headSizePercent": "70-80%",
+          "faceHeightRatioMin": 0.7,
+          "faceHeightRatioMax": 0.8,
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "3MB",
+          "sourceUrl": "https://www.borger.dk/transport-trafik-rejser/Pas/Pas-krav-til-foto",
+          "lastVerified": "2026-09-15"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "FI",
+      "name": "Finland",
+      "flag": "🇫🇮",
+      "slug": "finland-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 36,
+          "height": 47,
+          "unit": "mm",
+          "widthInches": "36×47 mm",
+          "bgColor": "#F4F4F4",
+          "bgDescription": "Plain monochromatic light gray background",
+          "headSizePercent": "70-80%",
+          "faceHeightRatioMin": 0.7,
+          "faceHeightRatioMax": 0.8,
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "3MB",
+          "sourceUrl": "https://poliisi.fi/en/passport-photo-instructions",
+          "lastVerified": "2026-09-15"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "RS",
+      "name": "Serbia",
+      "flag": "🇷🇸",
+      "slug": "serbia-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white background",
+          "headSizePercent": "70-80%",
+          "faceHeightRatioMin": 0.7,
+          "faceHeightRatioMax": 0.8,
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "3MB",
+          "sourceUrl": "http://www.mup.gov.rs/",
+          "lastVerified": "2026-09-15"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "BA",
+      "name": "Bosnia and Herzegovina",
+      "flag": "🇧🇦",
+      "slug": "bosnia-and-herzegovina-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white background",
+          "headSizePercent": "70-80%",
+          "faceHeightRatioMin": 0.7,
+          "faceHeightRatioMax": 0.8,
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "3MB",
+          "sourceUrl": "https://www.iddeea.gov.ba/",
+          "lastVerified": "2026-09-15"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "AL",
+      "name": "Albania",
+      "flag": "🇦🇱",
+      "slug": "albania-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white background",
+          "headSizePercent": "70-80%",
+          "faceHeightRatioMin": 0.7,
+          "faceHeightRatioMax": 0.8,
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "3MB",
+          "sourceUrl": "https://e-albania.al/",
+          "lastVerified": "2026-09-15"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "GE",
+      "name": "Georgia",
+      "flag": "🇬🇪",
+      "slug": "georgia-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white background",
+          "headSizePercent": "70-80%",
+          "faceHeightRatioMin": 0.7,
+          "faceHeightRatioMax": 0.8,
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "3MB",
+          "sourceUrl": "https://sda.gov.ge/",
+          "lastVerified": "2026-09-15"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "AM",
+      "name": "Armenia",
+      "flag": "🇦🇲",
+      "slug": "armenia-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white background",
+          "headSizePercent": "70-80%",
+          "faceHeightRatioMin": 0.7,
+          "faceHeightRatioMax": 0.8,
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "3MB",
+          "sourceUrl": "https://www.police.am/",
+          "lastVerified": "2026-09-15"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "SK",
+      "name": "Slovakia",
+      "flag": "🇸🇰",
+      "slug": "slovakia-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white background",
+          "headSizePercent": "70-80%",
+          "faceHeightRatioMin": 0.7,
+          "faceHeightRatioMax": 0.8,
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "3MB",
+          "sourceUrl": "https://www.minv.sk/",
+          "lastVerified": "2026-09-15"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "LT",
+      "name": "Lithuania",
+      "flag": "🇱🇹",
+      "slug": "lithuania-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white background",
+          "headSizePercent": "70-80%",
+          "faceHeightRatioMin": 0.7,
+          "faceHeightRatioMax": 0.8,
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "3MB",
+          "sourceUrl": "https://migracija.lrv.lt/",
+          "lastVerified": "2026-09-15"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "LV",
+      "name": "Latvia",
+      "flag": "🇱🇻",
+      "slug": "latvia-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white background",
+          "headSizePercent": "70-80%",
+          "faceHeightRatioMin": 0.7,
+          "faceHeightRatioMax": 0.8,
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "3MB",
+          "sourceUrl": "https://www.pmlp.gov.lv/",
+          "lastVerified": "2026-09-15"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "EE",
+      "name": "Estonia",
+      "flag": "🇪🇪",
+      "slug": "estonia-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 40,
+          "height": 50,
+          "unit": "mm",
+          "widthInches": "40×50 mm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white background",
+          "headSizePercent": "70-80%",
+          "faceHeightRatioMin": 0.7,
+          "faceHeightRatioMax": 0.8,
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "3MB",
+          "sourceUrl": "https://www.politsei.ee/",
+          "lastVerified": "2026-09-15"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "CY",
+      "name": "Cyprus",
+      "flag": "🇨🇾",
+      "slug": "cyprus-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white background",
+          "headSizePercent": "70-80%",
+          "faceHeightRatioMin": 0.7,
+          "faceHeightRatioMax": 0.8,
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "3MB",
+          "sourceUrl": "http://www.moi.gov.cy/",
+          "lastVerified": "2026-09-15"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "MT",
+      "name": "Malta",
+      "flag": "🇲🇹",
+      "slug": "malta-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white background",
+          "headSizePercent": "70-80%",
+          "faceHeightRatioMin": 0.7,
+          "faceHeightRatioMax": 0.8,
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "3MB",
+          "sourceUrl": "https://identitymalta.com/",
+          "lastVerified": "2026-09-15"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "IS",
+      "name": "Iceland",
+      "flag": "🇮🇸",
+      "slug": "iceland-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white background",
+          "headSizePercent": "70-80%",
+          "faceHeightRatioMin": 0.7,
+          "faceHeightRatioMax": 0.8,
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "3MB",
+          "sourceUrl": "https://www.skra.is/",
+          "lastVerified": "2026-09-15"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "LU",
+      "name": "Luxembourg",
+      "flag": "🇱🇺",
+      "slug": "luxembourg-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white background",
+          "headSizePercent": "70-80%",
+          "faceHeightRatioMin": 0.7,
+          "faceHeightRatioMax": 0.8,
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "3MB",
+          "sourceUrl": "https://guichet.public.lu/",
+          "lastVerified": "2026-09-15"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "MD",
+      "name": "Moldova",
+      "flag": "🇲🇩",
+      "slug": "moldova-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white background",
+          "headSizePercent": "70-80%",
+          "faceHeightRatioMin": 0.7,
+          "faceHeightRatioMax": 0.8,
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "3MB",
+          "sourceUrl": "https://asp.gov.md/",
+          "lastVerified": "2026-09-15"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "MK",
+      "name": "North Macedonia",
+      "flag": "🇲🇰",
+      "slug": "north-macedonia-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white background",
+          "headSizePercent": "70-80%",
+          "faceHeightRatioMin": 0.7,
+          "faceHeightRatioMax": 0.8,
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "3MB",
+          "sourceUrl": "https://mvr.gov.mk/",
+          "lastVerified": "2026-09-15"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "ME",
+      "name": "Montenegro",
+      "flag": "🇲🇪",
+      "slug": "montenegro-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white background",
+          "headSizePercent": "70-80%",
+          "faceHeightRatioMin": 0.7,
+          "faceHeightRatioMax": 0.8,
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "3MB",
+          "sourceUrl": "http://www.mup.gov.me/",
+          "lastVerified": "2026-09-15"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "SI",
+      "name": "Slovenia",
+      "flag": "🇸🇮",
+      "slug": "slovenia-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white background",
+          "headSizePercent": "70-80%",
+          "faceHeightRatioMin": 0.7,
+          "faceHeightRatioMax": 0.8,
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "3MB",
+          "sourceUrl": "https://e-uprava.gov.si/",
+          "lastVerified": "2026-09-15"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "IR",
+      "name": "Iran",
+      "flag": "🇮🇷",
+      "slug": "iran-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 40,
+          "height": 60,
+          "unit": "mm",
+          "widthInches": "40×60 mm (4×6 cm)",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white background",
+          "headSizePercent": "70-80%",
+          "faceHeightRatioMin": 0.7,
+          "faceHeightRatioMax": 0.8,
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "3MB",
+          "sourceUrl": "https://epolice.ir/",
+          "lastVerified": "2026-09-15"
+        },
+        {
+          "type": "Visa",
+          "width": 40,
+          "height": 60,
+          "unit": "mm",
+          "widthInches": "40×60 mm (4×6 cm)",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white background",
+          "headSizePercent": "70-80%",
+          "faceHeightRatioMin": 0.7,
+          "faceHeightRatioMax": 0.8,
+          "dpi": 300,
+          "fileFormat": "JPEG",
+          "maxFileSize": "3MB",
+          "sourceUrl": "https://evisa.mfa.ir/",
+          "lastVerified": "2026-09-15"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "IQ",
+      "name": "Iraq",
+      "flag": "🇮🇶",
+      "slug": "iraq-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white background",
+          "headSizePercent": "70-80%",
+          "faceHeightRatioMin": 0.7,
+          "faceHeightRatioMax": 0.8,
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "3MB",
+          "sourceUrl": "https://e-passport.gov.iq/",
+          "lastVerified": "2026-09-15"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "AF",
+      "name": "Afghanistan",
+      "flag": "🇦🇫",
+      "slug": "afghanistan-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white background",
+          "headSizePercent": "70-80%",
+          "faceHeightRatioMin": 0.7,
+          "faceHeightRatioMax": 0.8,
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "3MB",
+          "sourceUrl": "https://passport.gov.af/",
+          "lastVerified": "2026-09-15"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "MM",
+      "name": "Myanmar",
+      "flag": "🇲🇲",
+      "slug": "myanmar-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white background",
+          "headSizePercent": "70-80%",
+          "faceHeightRatioMin": 0.7,
+          "faceHeightRatioMax": 0.8,
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "3MB",
+          "sourceUrl": "https://evisa.moip.gov.mm/",
+          "lastVerified": "2026-09-15"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "KH",
+      "name": "Cambodia",
+      "flag": "🇰🇭",
+      "slug": "cambodia-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white background",
+          "headSizePercent": "70-80%",
+          "faceHeightRatioMin": 0.7,
+          "faceHeightRatioMax": 0.8,
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "3MB",
+          "sourceUrl": "https://www.evisa.gov.kh/",
+          "lastVerified": "2026-09-15"
+        },
+        {
+          "type": "Visa",
+          "width": 40,
+          "height": 60,
+          "unit": "mm",
+          "widthInches": "40×60 mm (4×6 cm)",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white background",
+          "headSizePercent": "70-80%",
+          "faceHeightRatioMin": 0.7,
+          "faceHeightRatioMax": 0.8,
+          "dpi": 300,
+          "fileFormat": "JPEG",
+          "maxFileSize": "3MB",
+          "sourceUrl": "https://www.evisa.gov.kh/",
+          "lastVerified": "2026-09-15"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "LA",
+      "name": "Laos",
+      "flag": "🇱🇦",
+      "slug": "laos-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 40,
+          "height": 60,
+          "unit": "mm",
+          "widthInches": "40×60 mm (4×6 cm)",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white background",
+          "headSizePercent": "70-80%",
+          "faceHeightRatioMin": 0.7,
+          "faceHeightRatioMax": 0.8,
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "3MB",
+          "sourceUrl": "https://laoevisa.gov.la/",
+          "lastVerified": "2026-09-15"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "UZ",
+      "name": "Uzbekistan",
+      "flag": "🇺🇿",
+      "slug": "uzbekistan-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white background",
+          "headSizePercent": "70-80%",
+          "faceHeightRatioMin": 0.7,
+          "faceHeightRatioMax": 0.8,
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "3MB",
+          "sourceUrl": "https://e-visa.gov.uz/",
+          "lastVerified": "2026-09-15"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "KZ",
+      "name": "Kazakhstan",
+      "flag": "🇰🇿",
+      "slug": "kazakhstan-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white background",
+          "headSizePercent": "70-80%",
+          "faceHeightRatioMin": 0.7,
+          "faceHeightRatioMax": 0.8,
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "3MB",
+          "sourceUrl": "https://egov.kz/",
+          "lastVerified": "2026-09-15"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "KG",
+      "name": "Kyrgyzstan",
+      "flag": "🇰🇬",
+      "slug": "kyrgyzstan-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white background",
+          "headSizePercent": "70-80%",
+          "faceHeightRatioMin": 0.7,
+          "faceHeightRatioMax": 0.8,
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "3MB",
+          "sourceUrl": "https://evisa.e-gov.kg/",
+          "lastVerified": "2026-09-15"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "TJ",
+      "name": "Tajikistan",
+      "flag": "🇹🇯",
+      "slug": "tajikistan-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white background",
+          "headSizePercent": "70-80%",
+          "faceHeightRatioMin": 0.7,
+          "faceHeightRatioMax": 0.8,
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "3MB",
+          "sourceUrl": "https://www.evisa.tj/",
+          "lastVerified": "2026-09-15"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "TM",
+      "name": "Turkmenistan",
+      "flag": "🇹🇲",
+      "slug": "turkmenistan-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white background",
+          "headSizePercent": "70-80%",
+          "faceHeightRatioMin": 0.7,
+          "faceHeightRatioMax": 0.8,
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "3MB",
+          "sourceUrl": "https://migration.gov.tm/",
+          "lastVerified": "2026-09-15"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "AZ",
+      "name": "Azerbaijan",
+      "flag": "🇦🇿",
+      "slug": "azerbaijan-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 30,
+          "height": 40,
+          "unit": "mm",
+          "widthInches": "30×40 mm (3×4 cm)",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white background",
+          "headSizePercent": "70-80%",
+          "faceHeightRatioMin": 0.7,
+          "faceHeightRatioMax": 0.8,
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "3MB",
+          "sourceUrl": "https://evisa.gov.az/",
+          "lastVerified": "2026-09-15"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "JO",
+      "name": "Jordan",
+      "flag": "🇯🇴",
+      "slug": "jordan-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white background",
+          "headSizePercent": "70-80%",
+          "faceHeightRatioMin": 0.7,
+          "faceHeightRatioMax": 0.8,
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "3MB",
+          "sourceUrl": "https://moi.gov.jo/",
+          "lastVerified": "2026-09-15"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "LB",
+      "name": "Lebanon",
+      "flag": "🇱🇧",
+      "slug": "lebanon-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white background",
+          "headSizePercent": "70-80%",
+          "faceHeightRatioMin": 0.7,
+          "faceHeightRatioMax": 0.8,
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "3MB",
+          "sourceUrl": "http://www.general-security.gov.lb/",
+          "lastVerified": "2026-09-15"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "YE",
+      "name": "Yemen",
+      "flag": "🇾🇪",
+      "slug": "yemen-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 50,
+          "height": 50,
+          "unit": "mm",
+          "widthInches": "50×50 mm (2×2 in)",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white background",
+          "headSizePercent": "50-69%",
+          "faceHeightRatioMin": 0.5,
+          "faceHeightRatioMax": 0.69,
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "3MB",
+          "sourceUrl": "http://yemenembassy.org/",
+          "lastVerified": "2026-09-15"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "SY",
+      "name": "Syria",
+      "flag": "🇸🇾",
+      "slug": "syria-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 40,
+          "height": 40,
+          "unit": "mm",
+          "widthInches": "40×40 mm (4×4 cm)",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white background",
+          "headSizePercent": "70-80%",
+          "faceHeightRatioMin": 0.7,
+          "faceHeightRatioMax": 0.8,
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "3MB",
+          "sourceUrl": "https://syrianpassports.gov.sy/",
+          "lastVerified": "2026-09-15"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "PS",
+      "name": "Palestine",
+      "flag": "🇵🇸",
+      "slug": "palestine-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white background",
+          "headSizePercent": "70-80%",
+          "faceHeightRatioMin": 0.7,
+          "faceHeightRatioMax": 0.8,
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "3MB",
+          "sourceUrl": "https://www.moi.pna.ps/",
+          "lastVerified": "2026-09-15"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "LY",
+      "name": "Libya",
+      "flag": "🇱🇾",
+      "slug": "libya-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 40,
+          "height": 60,
+          "unit": "mm",
+          "widthInches": "40×60 mm (4×6 cm)",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white background",
+          "headSizePercent": "70-80%",
+          "faceHeightRatioMin": 0.7,
+          "faceHeightRatioMax": 0.8,
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "3MB",
+          "sourceUrl": "https://passport.gov.ly/",
+          "lastVerified": "2026-09-15"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "TN",
+      "name": "Tunisia",
+      "flag": "🇹🇳",
+      "slug": "tunisia-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white background",
+          "headSizePercent": "70-80%",
+          "faceHeightRatioMin": 0.7,
+          "faceHeightRatioMax": 0.8,
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "3MB",
+          "sourceUrl": "http://www.interieur.gov.tn/",
+          "lastVerified": "2026-09-15"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "MA",
+      "name": "Morocco",
+      "flag": "🇲🇦",
+      "slug": "morocco-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#F4F4F4",
+          "bgDescription": "Plain light gray or off-white background",
+          "headSizePercent": "70-80%",
+          "faceHeightRatioMin": 0.7,
+          "faceHeightRatioMax": 0.8,
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "3MB",
+          "sourceUrl": "https://www.passeport.ma/",
+          "lastVerified": "2026-09-15"
+        },
+        {
+          "type": "Visa",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#F4F4F4",
+          "bgDescription": "Plain light gray or off-white background",
+          "headSizePercent": "70-80%",
+          "faceHeightRatioMin": 0.7,
+          "faceHeightRatioMax": 0.8,
+          "dpi": 300,
+          "fileFormat": "JPEG",
+          "maxFileSize": "3MB",
+          "sourceUrl": "https://www.acces-maroc.ma/",
+          "lastVerified": "2026-09-15"
+        }
+      ],
+      "popular": true
+    },
+    {
+      "code": "DZ",
+      "name": "Algeria",
+      "flag": "🇩🇿",
+      "slug": "algeria-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#F4F4F4",
+          "bgDescription": "Plain light gray or white background",
+          "headSizePercent": "70-80%",
+          "faceHeightRatioMin": 0.7,
+          "faceHeightRatioMax": 0.8,
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "3MB",
+          "sourceUrl": "https://passeport.interieur.gov.dz/",
+          "lastVerified": "2026-09-15"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "TZ",
+      "name": "Tanzania",
+      "flag": "🇹🇿",
+      "slug": "tanzania-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white or light blue background",
+          "headSizePercent": "70-80%",
+          "faceHeightRatioMin": 0.7,
+          "faceHeightRatioMax": 0.8,
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "3MB",
+          "sourceUrl": "https://immigration.go.tz/",
+          "lastVerified": "2026-09-15"
+        },
+        {
+          "type": "Visa",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white background",
+          "headSizePercent": "70-80%",
+          "faceHeightRatioMin": 0.7,
+          "faceHeightRatioMax": 0.8,
+          "dpi": 300,
+          "fileFormat": "JPEG",
+          "maxFileSize": "3MB",
+          "sourceUrl": "https://visa.immigration.go.tz/",
+          "lastVerified": "2026-09-15"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "UG",
+      "name": "Uganda",
+      "flag": "🇺🇬",
+      "slug": "uganda-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white background",
+          "headSizePercent": "70-80%",
+          "faceHeightRatioMin": 0.7,
+          "faceHeightRatioMax": 0.8,
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "3MB",
+          "sourceUrl": "https://www.passports.go.ug/",
+          "lastVerified": "2026-09-15"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "RW",
+      "name": "Rwanda",
+      "flag": "🇷🇼",
+      "slug": "rwanda-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white background",
+          "headSizePercent": "70-80%",
+          "faceHeightRatioMin": 0.7,
+          "faceHeightRatioMax": 0.8,
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "3MB",
+          "sourceUrl": "https://www.migration.gov.rw/",
+          "lastVerified": "2026-09-15"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "CM",
+      "name": "Cameroon",
+      "flag": "🇨🇲",
+      "slug": "cameroon-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 40,
+          "height": 40,
+          "unit": "mm",
+          "widthInches": "40×40 mm (4×4 cm)",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white background",
+          "headSizePercent": "70-80%",
+          "faceHeightRatioMin": 0.7,
+          "faceHeightRatioMax": 0.8,
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "3MB",
+          "sourceUrl": "https://passcam.cm/",
+          "lastVerified": "2026-09-15"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "CI",
+      "name": "Ivory Coast",
+      "flag": "🇨🇮",
+      "slug": "ivory-coast-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white background",
+          "headSizePercent": "70-80%",
+          "faceHeightRatioMin": 0.7,
+          "faceHeightRatioMax": 0.8,
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "3MB",
+          "sourceUrl": "https://snedai.com/passeport-cote-divoire/",
+          "lastVerified": "2026-09-15"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "SN",
+      "name": "Senegal",
+      "flag": "🇸🇳",
+      "slug": "senegal-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white background",
+          "headSizePercent": "70-80%",
+          "faceHeightRatioMin": 0.7,
+          "faceHeightRatioMax": 0.8,
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "3MB",
+          "sourceUrl": "https://snedai.com/passeport-senegal/",
+          "lastVerified": "2026-09-15"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "ML",
+      "name": "Mali",
+      "flag": "🇲🇱",
+      "slug": "mali-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white background",
+          "headSizePercent": "70-80%",
+          "faceHeightRatioMin": 0.7,
+          "faceHeightRatioMax": 0.8,
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "3MB",
+          "sourceUrl": "https://malipasseport.net/",
+          "lastVerified": "2026-09-15"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "SD",
+      "name": "Sudan",
+      "flag": "🇸🇩",
+      "slug": "sudan-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white background",
+          "headSizePercent": "70-80%",
+          "faceHeightRatioMin": 0.7,
+          "faceHeightRatioMax": 0.8,
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "3MB",
+          "sourceUrl": "https://passports.gov.sd/",
+          "lastVerified": "2026-09-15"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "SS",
+      "name": "South Sudan",
+      "flag": "🇸🇸",
+      "slug": "south-sudan-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white background",
+          "headSizePercent": "70-80%",
+          "faceHeightRatioMin": 0.7,
+          "faceHeightRatioMax": 0.8,
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "3MB",
+          "sourceUrl": "https://www.southsudanembassyusa.org/",
+          "lastVerified": "2026-09-15"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "SO",
+      "name": "Somalia",
+      "flag": "🇸🇴",
+      "slug": "somalia-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white background",
+          "headSizePercent": "70-80%",
+          "faceHeightRatioMin": 0.7,
+          "faceHeightRatioMax": 0.8,
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "3MB",
+          "sourceUrl": "https://immigration.gov.so/",
+          "lastVerified": "2026-09-15"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "CD",
+      "name": "DR Congo",
+      "flag": "🇨🇩",
+      "slug": "dr-congo-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white background",
+          "headSizePercent": "70-80%",
+          "faceHeightRatioMin": 0.7,
+          "faceHeightRatioMax": 0.8,
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "3MB",
+          "sourceUrl": "https://dgm.cd/",
+          "lastVerified": "2026-09-15"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "CG",
+      "name": "Republic of the Congo",
+      "flag": "🇨🇬",
+      "slug": "republic-of-the-congo-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white background",
+          "headSizePercent": "70-80%",
+          "faceHeightRatioMin": 0.7,
+          "faceHeightRatioMax": 0.8,
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "3MB",
+          "sourceUrl": "https://ambacongousa.org/",
+          "lastVerified": "2026-09-15"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "MZ",
+      "name": "Mozambique",
+      "flag": "🇲🇿",
+      "slug": "mozambique-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white background",
+          "headSizePercent": "70-80%",
+          "faceHeightRatioMin": 0.7,
+          "faceHeightRatioMax": 0.8,
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "3MB",
+          "sourceUrl": "https://www.portaldogoverno.gov.mz/",
+          "lastVerified": "2026-09-15"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "AO",
+      "name": "Angola",
+      "flag": "🇦🇴",
+      "slug": "angola-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white background",
+          "headSizePercent": "70-80%",
+          "faceHeightRatioMin": 0.7,
+          "faceHeightRatioMax": 0.8,
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "3MB",
+          "sourceUrl": "https://sme.gov.ao/",
+          "lastVerified": "2026-09-15"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "ZW",
+      "name": "Zimbabwe",
+      "flag": "🇿🇼",
+      "slug": "zimbabwe-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white background",
+          "headSizePercent": "70-80%",
+          "faceHeightRatioMin": 0.7,
+          "faceHeightRatioMax": 0.8,
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "3MB",
+          "sourceUrl": "http://www.rg.gov.zw/",
+          "lastVerified": "2026-09-15"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "ZM",
+      "name": "Zambia",
+      "flag": "🇿🇲",
+      "slug": "zambia-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white background",
+          "headSizePercent": "70-80%",
+          "faceHeightRatioMin": 0.7,
+          "faceHeightRatioMax": 0.8,
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "3MB",
+          "sourceUrl": "https://www.zambiaimmigration.gov.zm/",
+          "lastVerified": "2026-09-15"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "MG",
+      "name": "Madagascar",
+      "flag": "🇲🇬",
+      "slug": "madagascar-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white background",
+          "headSizePercent": "70-80%",
+          "faceHeightRatioMin": 0.7,
+          "faceHeightRatioMax": 0.8,
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "3MB",
+          "sourceUrl": "https://evisamada-mg.com/",
+          "lastVerified": "2026-09-15"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "FJ",
+      "name": "Fiji",
+      "flag": "🇫🇯",
+      "slug": "fiji-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white background",
+          "headSizePercent": "70-80%",
+          "faceHeightRatioMin": 0.7,
+          "faceHeightRatioMax": 0.8,
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "3MB",
+          "sourceUrl": "https://www.immigration.gov.fj/",
+          "lastVerified": "2026-09-15"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "PG",
+      "name": "Papua New Guinea",
+      "flag": "🇵🇬",
+      "slug": "papua-new-guinea-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white background",
+          "headSizePercent": "70-80%",
+          "faceHeightRatioMin": 0.7,
+          "faceHeightRatioMax": 0.8,
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "3MB",
+          "sourceUrl": "https://ica.gov.pg/",
+          "lastVerified": "2026-09-15"
+        }
+      ],
+      "popular": false
+    },
+    {
+      "code": "TO",
+      "name": "Tonga",
+      "flag": "🇹🇴",
+      "slug": "tonga-passport-photo",
+      "documents": [
+        {
+          "type": "Passport",
+          "width": 35,
+          "height": 45,
+          "unit": "mm",
+          "widthInches": "35×45 mm",
+          "bgColor": "#FFFFFF",
+          "bgDescription": "Plain white background",
+          "headSizePercent": "70-80%",
+          "faceHeightRatioMin": 0.7,
+          "faceHeightRatioMax": 0.8,
+          "dpi": 600,
+          "fileFormat": "JPEG",
+          "maxFileSize": "3MB",
+          "sourceUrl": "https://mic.gov.to/",
+          "lastVerified": "2026-09-15"
         }
       ],
       "popular": false
