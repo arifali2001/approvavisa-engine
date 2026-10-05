@@ -16,7 +16,7 @@ from approvavisa_engine.api.deps import (
 )
 from approvavisa_engine.core.image_utils import decode_base64_image, encode_image_base64, encode_image_bytes
 from approvavisa_engine.core.photo_processor import BasePhotoProcessor
-from approvavisa_engine.core.preview import BasePreviewGenerator, generate_draft_preview
+from approvavisa_engine.core.preview import BasePreviewGenerator
 from approvavisa_engine.core.spec_registry import BaseSpecRegistry
 from approvavisa_engine.core.validator import BaseValidator
 from approvavisa_engine.models.processing import ProcessRequest, ProcessResult
@@ -123,8 +123,6 @@ async def process_photo(
             return ProcessResult(success=False, message="Photo is below the portal minimum file size. Upload a higher-detail original.")
         processed_b64 = base64.b64encode(encoded_bytes).decode("ascii")
         edited = bool(result.get("background_replaced") and doc_spec.preserve_original)
-        if edited:
-            preview = generate_draft_preview(processed_img, "EDITED PHOTO - PREVIEW")
         preview_b64 = encode_image_base64(preview, dpi=target_dpi)
         print_sheet_b64 = encode_image_base64(result.get("print_sheet", processed_img), dpi=target_dpi)
 

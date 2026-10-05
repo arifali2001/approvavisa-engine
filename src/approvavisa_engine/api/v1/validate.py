@@ -144,7 +144,6 @@ async def validate_photo(
                     result.backgroundReplaced = True
                     result.certificateId = ""
                     result.processingWarnings = ["Edited photo: background replaced. India passport guidance asks for unaltered photos; confirm acceptance with your receiving mission."]
-                    specimen = generate_draft_preview(clean_processed, "EDITED PHOTO - PREVIEW")
                 result.processed_image = encode_image_base64(specimen)
             else:
                 result.compliant = False
