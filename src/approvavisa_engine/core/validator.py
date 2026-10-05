@@ -20,6 +20,7 @@ from typing import Dict, List, Optional, Tuple
 
 import cv2
 import numpy as np
+import cv2
 
 from approvavisa_engine.config import settings
 from approvavisa_engine.core.background import BackgroundAnalysisResult, BaseBackgroundEngine
@@ -146,9 +147,16 @@ class ICAOValidator(BaseValidator):
                 certificateId="", timestamp=time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
             )
         crown_result = self._crown.detect_crown(image)
+        face_mask = None
+        if getattr(face_result, "landmarks", None) is not None:
+            face_mask = np.zeros((h, w), dtype=np.uint8)
+            hull = cv2.convexHull(np.round(face_result.landmarks[:, :2]).astype(np.int32))
+            cv2.fillConvexPoly(face_mask, hull, 255)
+            face_mask = cv2.erode(face_mask, np.ones((3, 3), dtype=np.uint8))
         quality_report = self._quality.analyze(
             image,
             (face_result.face_x, face_result.face_y, face_result.face_w, face_result.face_h),
+            face_mask=face_mask,
         )
         bg_analysis = self._bg.analyze_background(
             image, doc_spec.bg_color, mask=getattr(crown_result, "subject_mask", None)
@@ -633,6 +641,8 @@ class ICAOValidator(BaseValidator):
         if doc_spec.preserve_original:
             # These cannot be repaired by cropping/resizing an unaltered photo.
             required_ids = {"bg_uniformity", "optical_axis_rotation", "expression", "eye_visibility", "shoulder_symmetry", "red_eye", "shadow_elimination", "specular_highlights", "exposure_histogram"}
+            if doc_spec.allow_background_replacement:
+                required_ids -= {"bg_uniformity", "shadow_elimination"}
             compliant = compliant and all(c.passed for c in checks if c.id in required_ids)
 
         # Coaching feedback

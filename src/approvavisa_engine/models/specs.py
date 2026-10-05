@@ -30,6 +30,7 @@ class DocumentSpec(BaseModel):
     min_file_size_bytes: Optional[int] = None
     preserve_original: bool = False
     allow_sharpening: bool = True
+    allow_background_replacement: bool = False
 
     # Extended fields (optional — some specs have these)
     bg_rgb: Optional[List[int]] = None

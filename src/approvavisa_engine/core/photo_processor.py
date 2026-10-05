@@ -68,12 +68,16 @@ class StandardPhotoProcessor(BasePhotoProcessor):
         bg_bgr = bg_color[::-1]
 
         # ── 1. Background Removal & Backdrop Replacement ──
-        if remove_background and not doc_spec.preserve_original:
+        background_replaced = False
+        if remove_background and (not doc_spec.preserve_original or doc_spec.allow_background_replacement):
             bg_result = self._bg.remove_background(image, bg_color)
             if bg_result.success and bg_result.image is not None:
+                background_replaced = True
                 isolated = bg_result.image
                 alpha = bg_result.alpha if bg_result.alpha is not None else np.full((h, w), 255, dtype=np.uint8)
             else:
+                if doc_spec.allow_background_replacement:
+                    return {"success": False, "message": "Background replacement failed. Retry with a clearer portrait."}
                 isolated = image.copy()
                 alpha = np.full((h, w), 255, dtype=np.uint8)
         else:
@@ -178,6 +182,7 @@ class StandardPhotoProcessor(BasePhotoProcessor):
         return {
             "success": True,
             "processed_image": sharpened,
+            "background_replaced": background_replaced,
             # Cropping changes the principal point and resizing scales focal length.
             # Reusing an image-centred guessed camera would invent a different pose.
             "camera_matrix": np.array([

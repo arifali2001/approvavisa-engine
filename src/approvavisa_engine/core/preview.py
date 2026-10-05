@@ -297,12 +297,12 @@ class AnnotatedPreviewGenerator(BasePreviewGenerator):
 
         return canvas
 
-def generate_draft_preview(photo: np.ndarray) -> np.ndarray:
+def generate_draft_preview(photo: np.ndarray, label: str = "DRAFT - NOT APPROVED") -> np.ndarray:
     """Watermark a prepared crop that has not passed assessment."""
     draft = photo.copy()
     h, w = draft.shape[:2]
     banner_height = max(32, int(h * 0.06))
     cv2.rectangle(draft, (0, h - banner_height), (w, h), (255, 255, 255), -1)
-    cv2.putText(draft, "DRAFT - NOT APPROVED", (12, h - banner_height // 3),
+    cv2.putText(draft, label, (12, h - banner_height // 3),
         cv2.FONT_HERSHEY_SIMPLEX, max(0.35, w / 1000), (0, 0, 180), 2, cv2.LINE_AA)
     return draft

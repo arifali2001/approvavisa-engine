@@ -14,6 +14,14 @@ from approvavisa_engine.core.image_quality import OpenCVQualityAnalyzer
 from approvavisa_engine.core.image_utils import encode_image_base64
 
 @pytest.fixture
+def spec_registry():
+    from approvavisa_engine.core.spec_registry import JSONSpecRegistry
+    registry = JSONSpecRegistry()
+    registry.get_document_spec('IN', 'Passport').allow_background_replacement = False
+    return registry
+
+
+@pytest.fixture
 def portrait():
     return cv2.imread(str(Path(__file__).parent / 'fixtures' / 'white-background-portrait.jpg'))
 
@@ -112,3 +120,30 @@ async def test_no_face_cannot_receive_draft_crop(spec_registry):
     assert not result.compliant and not result.preview_image and not result.processed_image
     assert not result.certificateId
     processor.process.assert_not_called()
+
+
+@pytest.mark.asyncio
+async def test_enabled_background_replacement_prepares_edited_passport(portrait, spec_registry):
+    spec_registry.get_document_spec('IN', 'Passport').allow_background_replacement = True
+    cream = portrait.copy()
+    cream[np.all(cream > 235, axis=2)] = (190, 220, 235)
+    result = await validate_photo(ValidateRequest(image=encode_image_base64(cream), country_code='IN'),
+        registry=spec_registry, validator=get_validator(), processor=get_processor(),
+        preview_gen=get_preview_generator(), face_analyzer=get_face_analyzer(),
+        crown_detector=get_crown_detector(), _='test')
+    assert result.compliant and result.processed_image
+    assert result.backgroundReplaced and result.processingWarnings
+    assert any('unaltered' in warning for warning in result.processingWarnings)
+    assert next(c for c in result.checks if c.id == 'bg_uniformity').passed
+    assert 80 <= result.metrics.headHeightPercent <= 85
+
+
+def test_facial_exposure_excludes_background_corners_but_keeps_real_glare():
+    image = np.full((100, 100, 3), 255, dtype=np.uint8)
+    mask = np.zeros((100, 100), dtype=np.uint8)
+    cv2.ellipse(mask, (50, 50), (25, 35), 0, 0, 360, 255, -1)
+    image[mask > 0] = 150
+    quality = OpenCVQualityAnalyzer()
+    assert quality.analyze(image, (20, 10, 60, 80), face_mask=mask).exposure.overexposed_pct == 0
+    image[mask > 0] = 255
+    assert quality.analyze(image, (20, 10, 60, 80), face_mask=mask).exposure.overexposed_pct == 100

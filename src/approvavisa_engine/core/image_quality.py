@@ -19,7 +19,7 @@ class BaseImageQualityAnalyzer(ABC):
 
     @abstractmethod
     def analyze(
-        self, image: np.ndarray, face_region: Tuple[int, int, int, int]
+        self, image: np.ndarray, face_region: Tuple[int, int, int, int], face_mask: np.ndarray | None = None
     ) -> ImageQualityReport:
         ...
 
@@ -36,7 +36,7 @@ class OpenCVQualityAnalyzer(BaseImageQualityAnalyzer):
         self._min_ppm = min_pixels_per_mm
 
     def analyze(
-        self, image: np.ndarray, face_region: Tuple[int, int, int, int]
+        self, image: np.ndarray, face_region: Tuple[int, int, int, int], face_mask: np.ndarray | None = None
     ) -> ImageQualityReport:
         report = ImageQualityReport()
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
@@ -73,6 +73,8 @@ class OpenCVQualityAnalyzer(BaseImageQualityAnalyzer):
         fx, fy, fw, fh = face_region
         face_gray = gray[max(0, fy):min(h, fy + fh), max(0, fx):min(w, fx + fw)]
         exposure_gray = face_gray if face_gray.size else gray
+        if face_mask is not None and face_mask.shape == gray.shape and np.any(face_mask):
+            exposure_gray = gray[face_mask > 0].reshape(-1, 1)
         hist = cv2.calcHist([exposure_gray], [0], None, [256], [0, 256]).flatten()
         total_pixels = float(exposure_gray.size)
         mean_brightness = float(np.mean(exposure_gray))
@@ -123,7 +125,7 @@ class OpenCVQualityAnalyzer(BaseImageQualityAnalyzer):
         return report
 
     def _detect_red_eye(
-        self, image: np.ndarray, face_region: Tuple[int, int, int, int]
+        self, image: np.ndarray, face_region: Tuple[int, int, int, int], face_mask: np.ndarray | None = None
     ) -> bool:
         """Detect red-eye by checking if red channel dominates in eye regions."""
         fx, fy, fw, fh = face_region

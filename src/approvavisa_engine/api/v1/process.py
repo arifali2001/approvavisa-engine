@@ -16,7 +16,7 @@ from approvavisa_engine.api.deps import (
 )
 from approvavisa_engine.core.image_utils import decode_base64_image, encode_image_base64, encode_image_bytes
 from approvavisa_engine.core.photo_processor import BasePhotoProcessor
-from approvavisa_engine.core.preview import BasePreviewGenerator
+from approvavisa_engine.core.preview import BasePreviewGenerator, generate_draft_preview
 from approvavisa_engine.core.spec_registry import BaseSpecRegistry
 from approvavisa_engine.core.validator import BaseValidator
 from approvavisa_engine.models.processing import ProcessRequest, ProcessResult
@@ -92,7 +92,7 @@ async def process_photo(
             image=processed_img,
             country_code=country.code,
             document_type=request.document_type,
-            doc_spec=doc_spec,
+            doc_spec=doc_spec.model_copy(update={"allow_background_replacement": False}),
             country_name=country.name,
             country_flag=country.flag,
             camera_matrix=result.get("camera_matrix"),
@@ -122,6 +122,9 @@ async def process_photo(
         if doc_spec.min_file_size_bytes and len(encoded_bytes) < doc_spec.min_file_size_bytes:
             return ProcessResult(success=False, message="Photo is below the portal minimum file size. Upload a higher-detail original.")
         processed_b64 = base64.b64encode(encoded_bytes).decode("ascii")
+        edited = bool(result.get("background_replaced") and doc_spec.preserve_original)
+        if edited:
+            preview = generate_draft_preview(processed_img, "EDITED PHOTO - PREVIEW")
         preview_b64 = encode_image_base64(preview, dpi=target_dpi)
         print_sheet_b64 = encode_image_base64(result.get("print_sheet", processed_img), dpi=target_dpi)
 
@@ -138,6 +141,8 @@ async def process_photo(
             dpi=result["dpi"],
             format="JPEG",
             message=f"Photo processed for {country.name} {request.document_type}.",
+            background_replaced=edited,
+            processing_warning="Edited photo: background replaced. India passport guidance asks for unaltered photos; confirm acceptance with your receiving mission." if edited else "",
         )
 
     except Exception as e:

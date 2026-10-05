@@ -98,7 +98,7 @@ async def validate_photo(
             proc_res = processor.process(
                 image=image,
                 doc_spec=doc_spec,
-                remove_background=not doc_spec.preserve_original,
+                remove_background=not doc_spec.preserve_original or doc_spec.allow_background_replacement,
                 output_dpi=doc_spec.dpi,
             )
             if proc_res.get("success") and proc_res.get("processed_image") is not None:
@@ -106,7 +106,7 @@ async def validate_photo(
                 if doc_spec.preserve_original:
                     output_audit = validator.validate(
                         image=clean_processed, country_code=country.code,
-                        document_type=request.document_type, doc_spec=doc_spec,
+                        document_type=request.document_type, doc_spec=doc_spec.model_copy(update={"allow_background_replacement": False}),
                         country_name=country.name, country_flag=country.flag,
                         camera_matrix=proc_res.get("camera_matrix"),
                     )
@@ -140,6 +140,11 @@ async def validate_photo(
                     face_result=f_res,
                     crown_result=c_res,
                 )
+                if proc_res.get("background_replaced") and doc_spec.preserve_original:
+                    result.backgroundReplaced = True
+                    result.certificateId = ""
+                    result.processingWarnings = ["Edited photo: background replaced. India passport guidance asks for unaltered photos; confirm acceptance with your receiving mission."]
+                    specimen = generate_draft_preview(clean_processed, "EDITED PHOTO - PREVIEW")
                 result.processed_image = encode_image_base64(specimen)
             else:
                 result.compliant = False

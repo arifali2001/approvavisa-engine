@@ -275,7 +275,9 @@
           "applicationRoute": "Global Passport Seva digital upload for overseas passport applications; mission print instructions are separate.",
           "glassesPolicy": "Remove glasses. Automated eyewear detection is not available; check manually.",
           "expressionPolicy": "Neutral expression, mouth closed, eyes open; face the camera directly.",
-          "digitalUploadNotes": "630 × 810 pixels, JPEG, maximum 250 KB. Official guidance specifies 80–85% face coverage. Our crop uses crown-to-chin height as an approximation; review the full head and shoulders manually. Take the photo about 1.5 metres away on a white background. No background replacement, retouching or sharpening for this route."
+          "digitalUploadNotes": "630 × 810 pixels, JPEG, maximum 250 KB. Official guidance specifies 80–85% face coverage and asks for unaltered photos on a white background. Our tool now replaces the background with white and crops the photo; the result is edited. Confirm that your receiving mission accepts software preparation. Facial retouching, sharpening and generated padding remain disabled.",
+          "allowBackgroundReplacement": true,
+          "allowSharpening": false
         },
         {
           "type": "Visa",

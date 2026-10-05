@@ -32,3 +32,5 @@ class ProcessResult(BaseModel):
     dpi: int = 600
     format: str = "JPEG"
     message: str = ""
+    background_replaced: bool = False
+    processing_warning: str = ""

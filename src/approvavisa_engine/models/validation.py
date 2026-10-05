@@ -83,4 +83,6 @@ class ValidationResult(BaseModel):
     timestamp: str
     processed_image: Optional[str] = None
     preview_image: Optional[str] = None
+    backgroundReplaced: bool = False
+    processingWarnings: List[str] = []
 

@@ -25,6 +25,7 @@ def processor():
 
 def test_exact_upload_dimensions_preserve_passport_background_and_print_size(spec_registry):
     spec = spec_registry.get_document_spec("IN", "Passport")
+    spec.allow_background_replacement = False
     proc, bg = processor()
     original = np.full((1000, 1000, 3), 245, dtype=np.uint8)
     result = proc.process(original, spec, remove_background=True, output_dpi=300)
@@ -37,6 +38,7 @@ def test_exact_upload_dimensions_preserve_passport_background_and_print_size(spe
 
 
 def test_passport_refuses_generated_padding(spec_registry):
+    spec_registry.get_document_spec("IN", "Passport").allow_background_replacement = False
     proc, _ = processor()
     proc._crown.detect_crown.return_value = SimpleNamespace(detected=True, crown_y=0)
     result = proc.process(np.full((1000, 1000, 3), 245, dtype=np.uint8),
@@ -73,7 +75,7 @@ async def test_impossible_file_limit_releases_no_output(spec_registry):
     validator.validate.return_value = SimpleNamespace(compliant=True, checks=[])
     source = np.full((1000,1000,3),245,dtype=np.uint8)
     result = await process_photo(ProcessRequest(image=encode_image_base64(source),
-        country_code="IN", max_file_size_kb=1), registry=spec_registry,
+        country_code="IN", max_file_size_kb=1, remove_background=False), registry=spec_registry,
         processor=proc, validator=validator, preview_gen=preview, _="test")
     assert not result.success and result.processed_image is None
 
