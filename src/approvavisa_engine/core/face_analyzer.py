@@ -87,7 +87,7 @@ class BaseFaceAnalyzer(ABC):
     """Abstract base for face analyzers. Override to use a different face detection backend."""
 
     @abstractmethod
-    def analyze(self, image: np.ndarray) -> FaceAnalysisResult:
+    def analyze(self, image: np.ndarray, camera_matrix: Optional[np.ndarray] = None) -> FaceAnalysisResult:
         ...
 
 
@@ -172,7 +172,7 @@ class MediaPipeFaceAnalyzer(BaseFaceAnalyzer):
             self._landmarker = mp.tasks.vision.FaceLandmarker.create_from_options(options)
         return self._landmarker
 
-    def analyze(self, image: np.ndarray) -> FaceAnalysisResult:
+    def analyze(self, image: np.ndarray, camera_matrix: Optional[np.ndarray] = None) -> FaceAnalysisResult:
         import mediapipe as mp
 
         result = FaceAnalysisResult()
@@ -273,10 +273,11 @@ class MediaPipeFaceAnalyzer(BaseFaceAnalyzer):
 
         focal_length = w
         center = (w / 2, h / 2)
-        camera_matrix = np.array(
-            [[focal_length, 0, center[0]], [0, focal_length, center[1]], [0, 0, 1]],
-            dtype=np.float64,
-        )
+        if camera_matrix is None:
+            camera_matrix = np.array(
+                [[focal_length, 0, center[0]], [0, focal_length, center[1]], [0, 0, 1]],
+                dtype=np.float64,
+            )
         dist_coeffs = np.zeros((4, 1))
 
         success, rvec, tvec = cv2.solvePnP(

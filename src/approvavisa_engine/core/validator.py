@@ -87,6 +87,7 @@ class BaseValidator(ABC):
         doc_spec: DocumentSpec,
         country_name: str,
         country_flag: str,
+        camera_matrix: Optional[np.ndarray] = None,
     ) -> ValidationResult:
         ...
 
@@ -120,12 +121,13 @@ class ICAOValidator(BaseValidator):
         doc_spec: DocumentSpec,
         country_name: str,
         country_flag: str,
+        camera_matrix: Optional[np.ndarray] = None,
     ) -> ValidationResult:
         h, w = image.shape[:2]
         checks: List[ValidationCheck] = []
 
         # --- Run all analysis pipelines ---
-        face_result = self._face.analyze(image)
+        face_result = self._face.analyze(image, camera_matrix=camera_matrix) if camera_matrix is not None else self._face.analyze(image)
         if not face_result.detected or face_result.face_count != 1:
             reason = "No face detected." if not face_result.detected else "More than one face detected."
             return ValidationResult(
@@ -481,7 +483,15 @@ class ICAOValidator(BaseValidator):
         ))
 
         # 16. Facial Perimeter Clearance
-        face_visible = face_result.detected and face_result.face_w > w * 0.3
+        # Face size is framing, not evidence of an obstruction. This check
+        # only measures frame clearance; hair/coverings require manual review.
+        face_visible = (
+            face_result.detected
+            and face_result.face_w > 0 and face_result.face_h > 0
+            and face_result.face_x > 0 and face_result.face_y > 0
+            and face_result.face_x + face_result.face_w < w - 1
+            and face_result.face_y + face_result.face_h < h - 1
+        )
         peri_score = 95.0 if face_visible else 30.0
         checks.append(ValidationCheck(
             id="facial_perimeter",
@@ -489,8 +499,8 @@ class ICAOValidator(BaseValidator):
             pillar="03 Facial Biometrics",
             passed=face_visible,
             score=peri_score,
-            measured="Full jawline & forehead visible" if face_visible else "Face partially obstructed",
-            required="Unobstructed facial contour",
+            measured="Face landmarks inside frame; review obstructions manually" if face_visible else "Face reaches the image edge",
+            required="Full facial contour inside frame; manual obstruction review",
         ))
 
         # 17. Red-Eye

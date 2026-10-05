@@ -20,7 +20,7 @@ from approvavisa_engine.core.crown_detector import BaseCrownDetector
 from approvavisa_engine.core.face_analyzer import BaseFaceAnalyzer
 from approvavisa_engine.core.image_utils import decode_base64_image, encode_image_base64
 from approvavisa_engine.core.photo_processor import BasePhotoProcessor
-from approvavisa_engine.core.preview import BasePreviewGenerator
+from approvavisa_engine.core.preview import BasePreviewGenerator, generate_draft_preview
 from approvavisa_engine.core.spec_registry import BaseSpecRegistry
 from approvavisa_engine.core.validator import BaseValidator
 from approvavisa_engine.models.validation import ValidationResult
@@ -84,10 +84,16 @@ async def validate_photo(
             country_flag=country.flag,
         )
 
-        if not result.compliant:
-            return result
+        draft_only = not result.compliant
+        if draft_only:
+            # Allow an unapproved crop for otherwise usable passport portraits.
+            # Invalid subjects/pose/lighting must still stop before preparation.
+            draft_failures = {"bg_uniformity", "head_ratio", "eye_alignment", "horizontal_centering", "crown_clearance", "aspect_ratio"}
+            failed_ids = {c.id for c in result.checks if not c.passed}
+            if not doc_spec.preserve_original or not failed_ids or not failed_ids <= draft_failures:
+                return result
 
-        # A failed audit must never generate a seemingly certified specimen.
+        # A failed audit may show a clearly marked draft, never a certified specimen.
         try:
             proc_res = processor.process(
                 image=image,
@@ -102,7 +108,17 @@ async def validate_photo(
                         image=clean_processed, country_code=country.code,
                         document_type=request.document_type, doc_spec=doc_spec,
                         country_name=country.name, country_flag=country.flag,
+                        camera_matrix=proc_res.get("camera_matrix"),
                     )
+                    if draft_only:
+                        output_audit.compliant = False
+                        output_audit.certificateId = ""
+                        output_audit.processed_image = None
+                        output_audit.preview_image = encode_image_base64(generate_draft_preview(clean_processed))
+                        if output_audit.retakeCoaching and output_audit.checks:
+                            output_audit.retakeCoaching = [c.feedback for c in sorted(output_audit.checks, key=lambda c: c.id != "bg_uniformity") if not c.passed and c.feedback]
+                        output_audit.retakeCoaching.append("Draft crop only. The original background is preserved; this passport route requires a plain white backdrop.")
+                        return output_audit
                     framing_ok = all(c.passed for c in output_audit.checks
                         if c.id in {"head_ratio", "horizontal_centering"})
                     if not output_audit.compliant or not framing_ok:
@@ -114,7 +130,7 @@ async def validate_photo(
                     result = output_audit
                 
                 # Analyze landmarks on clean cropped photo for pixel-perfect scale alignment
-                f_res = face_analyzer.analyze(clean_processed)
+                f_res = face_analyzer.analyze(clean_processed, camera_matrix=proc_res["camera_matrix"]) if proc_res.get("camera_matrix") is not None else face_analyzer.analyze(clean_processed)
                 c_res = crown_detector.detect_crown(clean_processed)
 
                 # Generate watermarked specimen with baked scales, measuring units, and light PREVIEW

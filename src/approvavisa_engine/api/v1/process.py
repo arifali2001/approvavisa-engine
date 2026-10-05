@@ -95,6 +95,7 @@ async def process_photo(
             doc_spec=doc_spec,
             country_name=country.name,
             country_flag=country.flag,
+            camera_matrix=result.get("camera_matrix"),
         )
 
         framing_ok = not doc_spec.preserve_original or all(

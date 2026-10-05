@@ -178,6 +178,13 @@ class StandardPhotoProcessor(BasePhotoProcessor):
         return {
             "success": True,
             "processed_image": sharpened,
+            # Cropping changes the principal point and resizing scales focal length.
+            # Reusing an image-centred guessed camera would invent a different pose.
+            "camera_matrix": np.array([
+                [w * out_w / crop_w, 0, (w / 2 - crop_x) * out_w / crop_w],
+                [0, w * out_h / crop_h, (h / 2 - crop_y) * out_h / crop_h],
+                [0, 0, 1],
+            ], dtype=np.float64) if doc_spec.preserve_original else None,
             "print_sheet": print_sheet,
             "width_px": out_w,
             "height_px": out_h,

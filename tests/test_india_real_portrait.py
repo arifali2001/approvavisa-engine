@@ -60,3 +60,55 @@ async def test_real_india_passport_rejects_unsuitable_backdrop(portrait, spec_re
     assert not result.processed_image
     assert not result.certificateId
     assert any(c.id == 'bg_uniformity' and not c.passed for c in result.checks)
+
+
+def test_small_in_frame_face_is_not_called_obstructed(portrait, spec_registry):
+    # Padding changes framing, not whether the face is obstructed.
+    padded = cv2.copyMakeBorder(portrait, 0, 0, portrait.shape[1], portrait.shape[1], cv2.BORDER_CONSTANT, value=(255, 255, 255))
+    face = get_face_analyzer().analyze(padded)
+    assert face.detected and face.face_w < padded.shape[1] * 0.3
+    result = get_validator().validate(padded, 'IN', 'Passport', spec_registry.get_document_spec('IN', 'Passport'), 'India', 'IN')
+    perimeter = next(c for c in result.checks if c.id == 'facial_perimeter')
+    assert perimeter.passed, perimeter.measured
+    assert 'manually' in perimeter.measured.lower()
+
+
+@pytest.mark.asyncio
+async def test_cream_backdrop_gets_draft_crop_without_approval(portrait, spec_registry):
+    cream = portrait.copy()
+    exterior = np.all(cream > 235, axis=2)
+    cream[exterior] = (190, 220, 235)
+    result = await validate_photo(ValidateRequest(image=encode_image_base64(cream), country_code='IN'),
+        registry=spec_registry, validator=get_validator(), processor=get_processor(),
+        preview_gen=get_preview_generator(), face_analyzer=get_face_analyzer(),
+        crown_detector=get_crown_detector(), _='test')
+    assert not result.compliant and not result.certificateId
+    assert not result.processed_image
+    assert result.preview_image, 'A usable portrait should show a draft crop, even when its backdrop fails'
+    assert Image.open(BytesIO(base64.b64decode(result.preview_image))).size == (630, 810)
+    assert 80 <= result.metrics.headHeightPercent <= 85
+    assert any(c.id == 'bg_uniformity' and not c.passed for c in result.checks)
+    assert not any('Head should be' in message for message in result.retakeCoaching)
+
+
+def test_passport_crop_preserves_camera_geometry_for_pose(portrait, spec_registry):
+    original = get_face_analyzer().analyze(portrait)
+    prepared = get_processor().process(portrait, spec_registry.get_document_spec('IN', 'Passport'), remove_background=False)
+    assert prepared['success']
+    assert prepared.get('camera_matrix') is not None
+    cropped = get_face_analyzer().analyze(prepared['processed_image'], camera_matrix=prepared['camera_matrix'])
+    assert abs(cropped.yaw - original.yaw) < 2
+    assert abs(cropped.pitch - original.pitch) < 2
+
+
+@pytest.mark.asyncio
+async def test_no_face_cannot_receive_draft_crop(spec_registry):
+    from unittest.mock import Mock
+    processor = Mock()
+    result = await validate_photo(ValidateRequest(image=encode_image_base64(np.full((600, 600, 3), 200, dtype=np.uint8)), country_code='IN'),
+        registry=spec_registry, validator=get_validator(), processor=processor,
+        preview_gen=get_preview_generator(), face_analyzer=get_face_analyzer(),
+        crown_detector=get_crown_detector(), _='test')
+    assert not result.compliant and not result.preview_image and not result.processed_image
+    assert not result.certificateId
+    processor.process.assert_not_called()
