@@ -24,6 +24,12 @@ class DocumentSpec(BaseModel):
     source_url: str = ""
     last_verified: str = ""
 
+    digital_width_px: Optional[int] = None
+    digital_height_px: Optional[int] = None
+    max_file_size_bytes: Optional[int] = None
+    min_file_size_bytes: Optional[int] = None
+    preserve_original: bool = False
+
     # Extended fields (optional — some specs have these)
     bg_rgb: Optional[List[int]] = None
     face_height_ratio_min: Optional[float] = None

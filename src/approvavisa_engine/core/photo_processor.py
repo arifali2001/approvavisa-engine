@@ -68,7 +68,7 @@ class StandardPhotoProcessor(BasePhotoProcessor):
         bg_bgr = bg_color[::-1]
 
         # ── 1. Background Removal & Backdrop Replacement ──
-        if remove_background:
+        if remove_background and not doc_spec.preserve_original:
             bg_result = self._bg.remove_background(image, bg_color)
             if bg_result.success and bg_result.image is not None:
                 isolated = bg_result.image
@@ -110,10 +110,15 @@ class StandardPhotoProcessor(BasePhotoProcessor):
         crop_h = int(face_h / target_head_ratio)
         crop_w = int(crop_h * aspect)
 
+        # Keep the entire head in frame for close-up passport crops.
+        # Face coverage is approximated using crown-to-chin height, not face area.
+        if doc_spec.preserve_original:
+            crop_y_from_crown = int((crop_h - face_h) * 0.35)
+
         # Eye line elevation: ICAO standard is 56-58% from bottom (42-44% from top)
         eye_y = face_result.eye_midpoint[1]
         desired_eye_y_from_top = int(crop_h * 0.431)
-        crop_y = eye_y - desired_eye_y_from_top
+        crop_y = (crown_y - crop_y_from_crown) if doc_spec.preserve_original else eye_y - desired_eye_y_from_top
 
         # ── 5. True Visual Head Centering ──
         # Rookie mistake in passport photo cropping: centering on the nose tip or eye midpoint.
@@ -133,6 +138,9 @@ class StandardPhotoProcessor(BasePhotoProcessor):
         pad_top = max(0, -crop_y)
         pad_right = max(0, (crop_x + crop_w) - w)
         pad_bottom = max(0, (crop_y + crop_h) - h)
+
+        if doc_spec.preserve_original and any((pad_left, pad_top, pad_right, pad_bottom)):
+            return {"success": False, "message": "Retake farther from the camera: the full head and shoulders must fit without generated padding."}
 
         canvas_h = h + pad_top + pad_bottom
         canvas_w = w + pad_left + pad_right
@@ -156,13 +164,13 @@ class StandardPhotoProcessor(BasePhotoProcessor):
             return {"success": False, "message": "Crop box calculation error."}
 
         # ── 8. High-Precision Resampling to Spec Millimeters & DPI ──
-        out_w = int(doc_spec.width / 25.4 * output_dpi)
-        out_h = int(doc_spec.height / 25.4 * output_dpi)
+        out_w = doc_spec.digital_width_px or int(doc_spec.width / 25.4 * output_dpi)
+        out_h = doc_spec.digital_height_px or int(doc_spec.height / 25.4 * output_dpi)
         resized = cv2.resize(cropped, (out_w, out_h), interpolation=cv2.INTER_LANCZOS4)
 
         # ── 9. Optical Micro-Contrast Sharpening ──
         g_fine = cv2.GaussianBlur(resized, (0, 0), 1.0)
-        sharpened = cv2.addWeighted(resized, 1.15, g_fine, -0.15, 0)
+        sharpened = resized if doc_spec.preserve_original else cv2.addWeighted(resized, 1.15, g_fine, -0.15, 0)
 
         # ── 10. Generate 4x6 Tiled Print Sheet ──
         print_sheet = self._generate_print_sheet(sharpened, doc_spec, output_dpi)
@@ -184,7 +192,10 @@ class StandardPhotoProcessor(BasePhotoProcessor):
         # Standard A4 Paper: 210 x 297 mm
         sheet_w = int((210 / 25.4) * dpi)
         sheet_h = int((297 / 25.4) * dpi)
-        ph, pw = photo.shape[:2]
+        # Digital upload dimensions must not change physical print dimensions.
+        pw = int(doc_spec.width / 25.4 * dpi)
+        ph = int(doc_spec.height / 25.4 * dpi)
+        photo = cv2.resize(photo, (pw, ph), interpolation=cv2.INTER_LANCZOS4)
 
         top_reserved = int((28 / 25.4) * dpi)
         bottom_reserved = int((20 / 25.4) * dpi)

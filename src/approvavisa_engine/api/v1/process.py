@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+import base64
 
 from fastapi import APIRouter, Depends, HTTPException
 
@@ -13,7 +14,7 @@ from approvavisa_engine.api.deps import (
     get_validator,
     verify_api_key,
 )
-from approvavisa_engine.core.image_utils import decode_base64_image, encode_image_base64
+from approvavisa_engine.core.image_utils import decode_base64_image, encode_image_base64, encode_image_bytes
 from approvavisa_engine.core.photo_processor import BasePhotoProcessor
 from approvavisa_engine.core.preview import BasePreviewGenerator
 from approvavisa_engine.core.spec_registry import BaseSpecRegistry
@@ -96,7 +97,10 @@ async def process_photo(
             country_flag=country.flag,
         )
 
-        if not validation.compliant:
+        framing_ok = not doc_spec.preserve_original or all(
+            c.passed for c in validation.checks if c.id in {"head_ratio", "horizontal_centering"}
+        )
+        if not validation.compliant or not framing_ok:
             return ProcessResult(success=False, message="Processed photo failed assessment. No output was released.")
 
         # Generate preview
@@ -108,12 +112,19 @@ async def process_photo(
 
         # Encode outputs with calibrated consular DPI and stripped metadata
         target_dpi = output_dpi or doc_spec.dpi or 600
-        processed_b64 = encode_image_base64(processed_img, dpi=target_dpi)
+        limits = [n for n in (doc_spec.max_file_size_bytes, max_kb * 1024 if max_kb else None) if n]
+        max_bytes = min(limits) if limits else None
+        encoded_bytes = encode_image_bytes(processed_img, dpi=target_dpi,
+            max_size_kb=max_bytes / 1024 if max_bytes else None)
+        if max_bytes and len(encoded_bytes) > max_bytes:
+            return ProcessResult(success=False, message="Photo could not be encoded within the upload size limit. Retake with a simpler background.")
+        if doc_spec.min_file_size_bytes and len(encoded_bytes) < doc_spec.min_file_size_bytes:
+            return ProcessResult(success=False, message="Photo is below the portal minimum file size. Upload a higher-detail original.")
+        processed_b64 = base64.b64encode(encoded_bytes).decode("ascii")
         preview_b64 = encode_image_base64(preview, dpi=target_dpi)
         print_sheet_b64 = encode_image_base64(result.get("print_sheet", processed_img), dpi=target_dpi)
 
-        encoded = encode_image_base64(processed_img)
-        file_size = len(encoded) * 3 // 4  # approximate decoded size
+        file_size = len(encoded_bytes)
 
         return ProcessResult(
             success=True,
@@ -124,7 +135,7 @@ async def process_photo(
             height_px=result["height_px"],
             file_size_bytes=file_size,
             dpi=result["dpi"],
-            format=request.output_format,
+            format="JPEG",
             message=f"Photo processed for {country.name} {request.document_type}.",
         )
 

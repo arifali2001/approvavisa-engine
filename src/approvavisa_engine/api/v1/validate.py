@@ -92,11 +92,24 @@ async def validate_photo(
             proc_res = processor.process(
                 image=image,
                 doc_spec=doc_spec,
-                remove_background=True,
+                remove_background=not doc_spec.preserve_original,
                 output_dpi=doc_spec.dpi,
             )
             if proc_res.get("success") and proc_res.get("processed_image") is not None:
                 clean_processed = proc_res["processed_image"]
+                if doc_spec.preserve_original:
+                    output_audit = validator.validate(
+                        image=clean_processed, country_code=country.code,
+                        document_type=request.document_type, doc_spec=doc_spec,
+                        country_name=country.name, country_flag=country.flag,
+                    )
+                    framing_ok = all(c.passed for c in output_audit.checks
+                        if c.id in {"head_ratio", "horizontal_centering"})
+                    if not output_audit.compliant or not framing_ok:
+                        result.compliant = False
+                        result.certificateId = ""
+                        result.retakeCoaching = ["The passport crop failed assessment. Retake with your full head and shoulders visible on a white backdrop."]
+                        return result
                 
                 # Analyze landmarks on clean cropped photo for pixel-perfect scale alignment
                 f_res = face_analyzer.analyze(clean_processed)
@@ -110,7 +123,13 @@ async def validate_photo(
                     crown_result=c_res,
                 )
                 result.processed_image = encode_image_base64(specimen)
+            elif doc_spec.preserve_original:
+                result.compliant = False
+                result.certificateId = ""
+                result.retakeCoaching = [proc_res.get("message", "Retake with enough space around your full head and shoulders.")]
         except Exception as proc_err:
+            if doc_spec.preserve_original:
+                raise HTTPException(status_code=503, detail="Passport preparation is unavailable. Retry before checkout.") from proc_err
             logger.warning(f"Could not generate specimen preview during validation: {proc_err}")
 
         return result

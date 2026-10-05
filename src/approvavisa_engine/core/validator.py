@@ -618,6 +618,10 @@ class ICAOValidator(BaseValidator):
         )
 
         compliant = (not critical_unrecoverable_failure) and (overall_score >= 65.0)
+        if doc_spec.preserve_original:
+            # These cannot be repaired by cropping/resizing an unaltered photo.
+            required_ids = {"bg_uniformity", "optical_axis_rotation", "expression", "eye_visibility", "shoulder_symmetry", "red_eye", "shadow_elimination", "specular_highlights", "exposure_histogram"}
+            compliant = compliant and all(c.passed for c in checks if c.id in required_ids)
 
         # Coaching feedback
         coaching = []
