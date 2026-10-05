@@ -252,6 +252,10 @@ class RembgBackgroundEngine(BaseBackgroundEngine):
             bg_mask[:, -border:] = True
 
         if not bg_mask.any():
+            # An absent visible backdrop cannot be certified as a clean white wall.
+            result.delta_e = 100.0
+            result.uniformity_score = 0.0
+            result.has_shadows = True
             return result
 
         rgb_img = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)

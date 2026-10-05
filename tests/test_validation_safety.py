@@ -6,6 +6,7 @@ import numpy as np
 import pytest
 
 from approvavisa_engine.core.validator import ICAOValidator
+from approvavisa_engine.core.image_utils import encode_image_base64
 from approvavisa_engine.api.v1.process import process_photo
 from approvavisa_engine.models.processing import ProcessRequest
 
@@ -50,3 +51,21 @@ async def test_processing_blocks_failed_output(spec_registry):
         registry=spec_registry, validator=validator, processor=processor, preview_gen=preview, _="test")
     assert result.success is False and result.processed_image is None
     preview.generate.assert_not_called()
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize('document', ['Passport', 'Visa', 'OCI Card', 'Regular Visa'])
+async def test_preview_failure_never_approves_checkout(spec_registry, document):
+    from types import SimpleNamespace
+    from unittest.mock import Mock
+    from approvavisa_engine.api.v1.validate import validate_photo, ValidateRequest
+    image = encode_image_base64(np.full((600, 600, 3), 200, dtype=np.uint8))
+    validator, processor, preview, face, crown = Mock(), Mock(), Mock(), Mock(), Mock()
+    validator.validate.return_value = SimpleNamespace(compliant=True, certificateId='stub', retakeCoaching=[], processed_image=None)
+    processor.process.return_value = {'success': False, 'message': 'Cannot prepare this photo.'}
+    result = await validate_photo(ValidateRequest(image=image, country_code='IN', document_type=document),
+        registry=spec_registry, validator=validator, processor=processor, preview_gen=preview,
+        face_analyzer=face, crown_detector=crown, _='test')
+    assert not result.compliant
+    assert not result.certificateId
+    assert result.processed_image is None
+    preview.generate_preview_specimen.assert_not_called()

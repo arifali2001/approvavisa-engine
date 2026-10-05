@@ -300,7 +300,8 @@
           "minFileSizeBytes": 10000,
           "authorityName": "Government of India / Indian Visa Online",
           "applicationRoute": "Indian e-Visa digital upload; regular visa and printed-photo requirements may differ.",
-          "digitalUploadNotes": "Square JPEG, minimum 350 × 350 pixels, 10 KB–1 MB, plain light or white background. This preset exports 600 × 600 pixels. Remove spectacles. The recorded millimetres are not an e-Visa upload requirement."
+          "digitalUploadNotes": "Square JPEG, minimum 350 × 350 pixels, 10 KB–1 MB, plain light or white background. This preset exports 600 × 600 pixels. Remove spectacles. The recorded millimetres are not an e-Visa upload requirement.",
+          "displayName": "e-Visa"
         },
         {
           "type": "OCI Card",
@@ -324,7 +325,34 @@
           "maxFileSizeBytes": 200000,
           "authorityName": "Ministry of Home Affairs / OCI Services",
           "applicationRoute": "OCI online upload; verify paper-photo instructions with your mission.",
-          "digitalUploadNotes": "Square JPEG/JPG, 200–900 pixels on each side, maximum 200 KB. This preset exports 600 × 600 pixels. The FAQ specifies a light background, not white, and 80% face coverage; inspect framing manually rather than treating face coverage as crown-to-chin height."
+          "digitalUploadNotes": "Square JPEG/JPG, 200–900 pixels on each side, maximum 200 KB. This preset exports 600 × 600 pixels. The FAQ specifies a light background, not white, and 80% face coverage; inspect framing manually rather than treating face coverage as crown-to-chin height.",
+          "allowSharpening": false
+        },
+        {
+          "type": "Regular Visa",
+          "width": 35,
+          "height": 35,
+          "unit": "mm",
+          "widthInches": "35×35 mm (Square)",
+          "bgColor": "#F4F4F4",
+          "bgDescription": "Plain light gray background",
+          "headSizePercent": "50-69%",
+          "faceHeightRatioMin": 0.5,
+          "faceHeightRatioMax": 0.69,
+          "dpi": 300,
+          "fileFormat": "JPEG",
+          "maxFileSize": "300KB",
+          "sourceUrl": "https://indianvisaonline.gov.in/visa/instruction.html",
+          "lastVerified": "2026-10-05",
+          "sourceCheckedOn": "2026-10-05",
+          "digitalWidthPx": 600,
+          "digitalHeightPx": 600,
+          "maxFileSizeBytes": 300000,
+          "minFileSizeBytes": 10000,
+          "authorityName": "Government of India / Indian Visa Online",
+          "applicationRoute": "Regular Indian visa application through Indian Visa Online; separate from e-Visa.",
+          "digitalUploadNotes": "Square JPEG, 350–1000 pixels on each side, 10–300 KB, plain light or white background, no borders or shadows. This preset exports 600 × 600 pixels. Confirm printed-photo dimensions and quantities with your mission.",
+          "displayName": "Regular Visa"
         }
       ],
       "popular": true

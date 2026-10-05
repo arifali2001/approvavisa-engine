@@ -110,6 +110,8 @@ async def validate_photo(
                         result.certificateId = ""
                         result.retakeCoaching = ["The passport crop failed assessment. Retake with your full head and shoulders visible on a white backdrop."]
                         return result
+                    # Show the prepared photo's measurements, not the uncropped upload's.
+                    result = output_audit
                 
                 # Analyze landmarks on clean cropped photo for pixel-perfect scale alignment
                 f_res = face_analyzer.analyze(clean_processed)
@@ -123,16 +125,17 @@ async def validate_photo(
                     crown_result=c_res,
                 )
                 result.processed_image = encode_image_base64(specimen)
-            elif doc_spec.preserve_original:
+            else:
                 result.compliant = False
                 result.certificateId = ""
                 result.retakeCoaching = [proc_res.get("message", "Retake with enough space around your full head and shoulders.")]
         except Exception as proc_err:
-            if doc_spec.preserve_original:
-                raise HTTPException(status_code=503, detail="Passport preparation is unavailable. Retry before checkout.") from proc_err
-            logger.warning(f"Could not generate specimen preview during validation: {proc_err}")
+            logger.exception("Photo preparation failed during validation")
+            raise HTTPException(status_code=503, detail="Photo preparation is unavailable. Retry before checkout.") from proc_err
 
         return result
+    except HTTPException:
+        raise
     except Exception as e:
         logger.exception("Validation failed")
         raise HTTPException(status_code=500, detail=f"Validation error: {e}")

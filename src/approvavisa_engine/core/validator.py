@@ -148,7 +148,9 @@ class ICAOValidator(BaseValidator):
             image,
             (face_result.face_x, face_result.face_y, face_result.face_w, face_result.face_h),
         )
-        bg_analysis = self._bg.analyze_background(image, doc_spec.bg_color)
+        bg_analysis = self._bg.analyze_background(
+            image, doc_spec.bg_color, mask=getattr(crown_result, "subject_mask", None)
+        )
 
         # Parse spec constraints
         head_min, head_max = _parse_head_size_range(doc_spec.head_size_percent)

@@ -46,7 +46,7 @@ def test_passport_refuses_generated_padding(spec_registry):
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("document,width,height,limit", [("Passport",630,810,250000),("OCI Card",600,600,200000),("Visa",600,600,1000000)])
+@pytest.mark.parametrize("document,width,height,limit", [("Passport",630,810,250000),("OCI Card",600,600,200000),("Visa",600,600,1000000),("Regular Visa",600,600,300000)])
 async def test_portal_jpeg_has_exact_pixels_and_enforced_bytes(spec_registry, document, width, height, limit):
     proc, _ = processor()
     # Skip background model while exercising real cropping and JPEG compression.
@@ -62,7 +62,7 @@ async def test_portal_jpeg_has_exact_pixels_and_enforced_bytes(spec_registry, do
     assert len(data) == result.file_size_bytes <= limit
     assert Image.open(BytesIO(data)).size == (width, height)
     assert result.format == "JPEG"
-    if document == "Visa":
+    if document in {"Visa", "Regular Visa"}:
         assert len(data) >= 10000
 
 

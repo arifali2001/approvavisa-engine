@@ -113,7 +113,7 @@ class StandardPhotoProcessor(BasePhotoProcessor):
         # Keep the entire head in frame for close-up passport crops.
         # Face coverage is approximated using crown-to-chin height, not face area.
         if doc_spec.preserve_original:
-            crop_y_from_crown = int((crop_h - face_h) * 0.35)
+            crop_y_from_crown = int((crop_h - face_h) * 0.45)
 
         # Eye line elevation: ICAO standard is 56-58% from bottom (42-44% from top)
         eye_y = face_result.eye_midpoint[1]
@@ -170,7 +170,7 @@ class StandardPhotoProcessor(BasePhotoProcessor):
 
         # ── 9. Optical Micro-Contrast Sharpening ──
         g_fine = cv2.GaussianBlur(resized, (0, 0), 1.0)
-        sharpened = resized if doc_spec.preserve_original else cv2.addWeighted(resized, 1.15, g_fine, -0.15, 0)
+        sharpened = resized if doc_spec.preserve_original or not doc_spec.allow_sharpening else cv2.addWeighted(resized, 1.15, g_fine, -0.15, 0)
 
         # ── 10. Generate 4x6 Tiled Print Sheet ──
         print_sheet = self._generate_print_sheet(sharpened, doc_spec, output_dpi)

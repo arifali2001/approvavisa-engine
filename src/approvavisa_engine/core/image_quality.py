@@ -69,9 +69,13 @@ class OpenCVQualityAnalyzer(BaseImageQualityAnalyzer):
         report.noise_level = float(np.std(noise))
 
         # --- Exposure Analysis (Histogram-Based) ---
-        hist = cv2.calcHist([gray], [0], None, [256], [0, 256]).flatten()
-        total_pixels = float(h * w)
-        mean_brightness = float(np.mean(gray))
+        # Exposure describes the face, not the required white backdrop or clothing.
+        fx, fy, fw, fh = face_region
+        face_gray = gray[max(0, fy):min(h, fy + fh), max(0, fx):min(w, fx + fw)]
+        exposure_gray = face_gray if face_gray.size else gray
+        hist = cv2.calcHist([exposure_gray], [0], None, [256], [0, 256]).flatten()
+        total_pixels = float(exposure_gray.size)
+        mean_brightness = float(np.mean(exposure_gray))
         overexposed = float(hist[240:].sum() / total_pixels * 100)
         underexposed = float(hist[:15].sum() / total_pixels * 100)
 

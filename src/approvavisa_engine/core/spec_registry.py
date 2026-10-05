@@ -66,6 +66,7 @@ class JSONSpecRegistry(BaseSpecRegistry):
                         max_file_size_bytes=d.get("maxFileSizeBytes"),
                         min_file_size_bytes=d.get("minFileSizeBytes"),
                         preserve_original=d.get("preserveOriginal", False),
+                        allow_sharpening=d.get("allowSharpening", True),
                         face_height_ratio_min=d.get("faceHeightRatioMin", d.get("face_height_ratio_min")),
                         face_height_ratio_max=d.get("faceHeightRatioMax", d.get("face_height_ratio_max")),
                     )
