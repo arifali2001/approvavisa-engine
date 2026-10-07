@@ -14,6 +14,7 @@ class ProcessRequest(BaseModel):
     country_code: str
     document_type: str = "Passport"
     remove_background: bool = True
+    editing_mode: bool = False
     output_format: str = "JPEG"
     output_dpi: Optional[int] = None
     max_file_size_kb: Optional[int] = None
@@ -34,3 +35,4 @@ class ProcessResult(BaseModel):
     message: str = ""
     background_replaced: bool = False
     processing_warning: str = ""
+    compliant: bool = False

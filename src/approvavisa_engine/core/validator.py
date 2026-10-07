@@ -164,7 +164,7 @@ class ICAOValidator(BaseValidator):
 
         # Parse spec constraints
         head_min, head_max = _parse_head_size_range(doc_spec.head_size_percent)
-        aspect_target = doc_spec.width / doc_spec.height
+        aspect_target = (doc_spec.digital_width_px / doc_spec.digital_height_px) if doc_spec.digital_width_px and doc_spec.digital_height_px else doc_spec.width / doc_spec.height
 
         # --- Compute derived metrics ---
         # Physical scale: mm per pixel based on spec dimensions
@@ -208,8 +208,8 @@ class ICAOValidator(BaseValidator):
         # =====================================================================
 
         # 1. Eye Line Baseline Alignment
-        eye_min_mm = doc_spec.height * 0.5  # rough: eyes in middle 50-70% zone
-        eye_max_mm = doc_spec.height * 0.75
+        eye_min_mm = doc_spec.height * (doc_spec.eye_height_min or 0.5)  # rough: eyes in middle 50-70% zone
+        eye_max_mm = doc_spec.height * (doc_spec.eye_height_max or 0.75)
         eye_passed = eye_min_mm <= eye_level_mm <= eye_max_mm if face_result.detected else False
         eye_score = 0.0
         if face_result.detected and eye_passed:
@@ -220,17 +220,18 @@ class ICAOValidator(BaseValidator):
         elif face_result.detected:
             eye_score = max(0, 50 - abs(eye_level_mm - (eye_min_mm + eye_max_mm) / 2))
 
-        checks.append(ValidationCheck(
-            id="eye_alignment",
-            name="Eye Line Baseline Alignment",
-            pillar="01 Spatial Geometry",
-            passed=eye_passed,
-            score=round(eye_score, 1),
-            measured=f"{eye_level_mm} mm from bottom",
-            required=f"{eye_min_mm:.0f} - {eye_max_mm:.0f} mm",
-            feedback="Eyes perfectly positioned on optical baseline." if eye_passed else
-                     f"Adjust eye position to {eye_min_mm:.0f}-{eye_max_mm:.0f}mm from bottom edge.",
-        ))
+        if doc_spec.eye_height_min is not None and doc_spec.eye_height_max is not None:
+            checks.append(ValidationCheck(
+                id="eye_alignment",
+                name="Eye Line Baseline Alignment",
+                pillar="01 Spatial Geometry",
+                passed=eye_passed,
+                score=round(eye_score, 1),
+                measured=f"{eye_level_mm} mm from bottom",
+                required=f"{eye_min_mm:.0f} - {eye_max_mm:.0f} mm",
+                feedback="Eyes perfectly positioned on optical baseline." if eye_passed else
+                         f"Adjust eye position to {eye_min_mm:.0f}-{eye_max_mm:.0f}mm from bottom edge.",
+            ))
 
         # 2. Crown-to-Chin Proportion
         head_passed = head_min <= head_height_pct <= head_max if face_result.detected else False
@@ -290,8 +291,8 @@ class ICAOValidator(BaseValidator):
 
         # 5. Crown Clearance
         crown_min_mm = 3.0
-        crown_passed = crown_clearance_mm >= crown_min_mm if crown_result.detected else True
-        crown_score = min(100, crown_clearance_mm / crown_min_mm * 100) if crown_result.detected else 90
+        crown_passed = crown_clearance_mm >= crown_min_mm if crown_result.detected else False
+        crown_score = min(100, crown_clearance_mm / crown_min_mm * 100) if crown_result.detected else 0
 
         checks.append(ValidationCheck(
             id="crown_clearance",
@@ -302,23 +303,23 @@ class ICAOValidator(BaseValidator):
             measured=f"{crown_clearance_mm:.1f} mm clear space",
             required=f"Min {crown_min_mm} mm",
             feedback="Adequate crown clearance." if crown_passed else
-                     "Move head down or zoom out to increase top margin.",
+                     ("Move head down or zoom out to increase top margin." if crown_result.detected else "The top of your head could not be measured. Retake with your full hair and head visible against a plain backdrop."),
         ))
 
         # 6. Shoulder Symmetry (approximated from face roll)
         roll_deg = abs(face_result.roll)
-        shoulder_passed = roll_deg < 3.0 if face_result.detected else False
+        shoulder_passed = roll_deg < (doc_spec.max_roll or 3.0) if face_result.detected else False
         shoulder_score = max(0, 100 - roll_deg * 15) if face_result.detected else 0
 
         checks.append(ValidationCheck(
             id="shoulder_symmetry",
-            name="Shoulder Contour Symmetry",
+            name="Estimated Head Roll",
             pillar="01 Spatial Geometry",
             passed=shoulder_passed,
             score=round(shoulder_score, 1),
             measured=f"{roll_deg:.1f} deg tilt",
-            required="Level (< 3.0 deg tilt)",
-            feedback="Level shoulders detected." if shoulder_passed else
+            required=f"Estimated roll < {doc_spec.max_roll or 3.0:.1f} deg",
+            feedback="Estimated head roll within the assessment limit." if shoulder_passed else
                      f"Tilt your head {roll_deg:.1f} deg to level your eye line.",
         ))
 
@@ -340,7 +341,7 @@ class ICAOValidator(BaseValidator):
             measured=f"Delta-E: {de:.2f} ({doc_spec.bg_description})",
             required="< 5.0 Delta-E (CIEDE2000)",
             feedback=f"Clean {doc_spec.bg_description} backdrop." if bg_passed else
-                     f"Background color deviates {de:.1f} Delta-E from {doc_spec.bg_description}.",
+                     f"Retake against the required {doc_spec.bg_description.lower()}.",
         ))
 
         # 8. Specular Highlights (via overexposure)
@@ -395,18 +396,6 @@ class ICAOValidator(BaseValidator):
 
         # 11. Color Temperature (approximated)
         # Simple heuristic: check B/R ratio in face region
-        ct_passed = True
-        ct_score = 95.0
-        checks.append(ValidationCheck(
-            id="color_temperature",
-            name="Color Temperature Calibration",
-            pillar="02 Photometric Balance",
-            passed=ct_passed,
-            score=ct_score,
-            measured="~5800K estimated",
-            required="5500K - 6500K",
-            feedback="Daylight-balanced color temperature.",
-        ))
 
         # =====================================================================
         # PILLAR 03: FACIAL BIOMETRICS (6 checks)
@@ -415,14 +404,14 @@ class ICAOValidator(BaseValidator):
         # 12. Neutral Expression (MAR + smile ratio)
         mar = face_result.mouth_aspect_ratio
         smile = face_result.smile_ratio
-        expr_passed = mar < 0.4 and smile < 0.55 if face_result.detected else False
+        expr_passed = mar < 0.4 and (doc_spec.smile_allowed or smile < 0.55) if face_result.detected else False
         expr_score = 100.0
         expr_fb = "Facial muscles relaxed in resting state."
         if face_result.detected:
             if mar >= 0.4:
                 expr_score -= 40
                 expr_fb = "Close your mouth — lips should be together."
-            if smile >= 0.55:
+            if smile >= 0.55 and not doc_spec.smile_allowed:
                 expr_score -= 30
                 expr_fb = "Adopt a neutral expression — no smiling."
         else:
@@ -436,7 +425,7 @@ class ICAOValidator(BaseValidator):
             passed=expr_passed,
             score=max(0, expr_score),
             measured=f"MAR: {mar:.2f}, Smile: {smile:.2f}",
-            required="MAR < 0.4, neutral smile ratio",
+            required="Closed mouth; natural smile permitted" if doc_spec.smile_allowed else "Closed mouth; neutral expression",
             feedback=expr_fb,
         ))
 
@@ -444,7 +433,8 @@ class ICAOValidator(BaseValidator):
         yaw = abs(face_result.yaw)
         pitch = abs(face_result.pitch)
         max_angle = doc_spec.max_yaw if doc_spec.max_yaw else 5.0
-        pose_passed = yaw < max_angle and pitch < max_angle if face_result.detected else False
+        max_pitch = doc_spec.max_pitch or 5.0
+        pose_passed = yaw < max_angle and pitch < max_pitch if face_result.detected else False
         pose_score = max(0, 100 - (yaw + pitch) * 8) if face_result.detected else 0
 
         checks.append(ValidationCheck(
@@ -454,9 +444,9 @@ class ICAOValidator(BaseValidator):
             passed=pose_passed,
             score=round(pose_score, 1),
             measured=f"Yaw: {face_result.yaw:.1f} deg / Pitch: {face_result.pitch:.1f} deg",
-            required=f"< {max_angle:.0f} deg from optical axis",
+            required=f"Estimated yaw < {max_angle:.0f} deg and pitch < {max_pitch:.0f} deg; camera calibration is approximate",
             feedback="Face directly facing camera." if pose_passed else
-                     f"Turn your head {yaw:.1f} deg " + ("left" if face_result.yaw > 0 else "right") + " to face the camera directly.",
+                     "Retake at eye level, facing the lens directly. The estimated pose is outside the assessment limits.",
         ))
 
         # 14. Eye Visibility (EAR)
@@ -478,17 +468,6 @@ class ICAOValidator(BaseValidator):
         ))
 
         # 15. Eyewear/Glare (basic — no ML glasses detector yet)
-        glasses_passed = True
-        glasses_score = 100.0
-        checks.append(ValidationCheck(
-            id="eyewear_glare",
-            name="Eyewear & Lens Reflection",
-            pillar="03 Facial Biometrics",
-            passed=glasses_passed,
-            score=glasses_score,
-            measured="No reflections detected",
-            required="No reflection / remove glasses",
-        ))
 
         # 16. Facial Perimeter Clearance
         # Face size is framing, not evidence of an obstruction. This check
@@ -548,15 +527,6 @@ class ICAOValidator(BaseValidator):
         ))
 
         # 19. Color Space (sRGB)
-        checks.append(ValidationCheck(
-            id="color_space",
-            name="sRGB IEC61966-2.1 Color Profile",
-            pillar="04 Digital Output",
-            passed=True,
-            score=100.0,
-            measured="sRGB profile will be embedded",
-            required="Standard sRGB",
-        ))
 
         # 20. Compression Quality (blur as proxy)
         comp_passed = quality_report.blur_score > 30
@@ -587,15 +557,6 @@ class ICAOValidator(BaseValidator):
         ))
 
         # 22. ICAO Checksum
-        checks.append(ValidationCheck(
-            id="icao_checksum",
-            name="ICAO Doc 9303 Checksum Pass",
-            pillar="04 Digital Output",
-            passed=True,
-            score=100.0,
-            measured="Digital Checksum Verified",
-            required="MRTD Part 3 Compliant",
-        ))
 
         # =====================================================================
         # SCORING: Confidence-weighted pillar average
@@ -612,38 +573,14 @@ class ICAOValidator(BaseValidator):
 
         overall_score = round(weighted_score, 1)
 
-        # Consular acceptance reality check:
-        # Real talk: expecting a raw smartphone selfie taken in a hallway to meet 100% of ICAO standards
-        # is like expecting someone to parallel park a cruise ship on their first lesson.
-        #
-        # If the overall score is >= 65% and the fundamentals are solid, downstream processing
-        # will do the heavy lifting (replacing messy backgrounds, fixing the crop, locking 600 DPI).
-        # We only throw hands and fail immediately on total dealbreakers:
-        #   - Zero faces, or your buddy photobombing in the background
-        #   - Looking completely sideways (yaw/pitch > 18 deg)
-        #   - Fast asleep / mid-blink (both eyes shut tight)
-        #   - Lighting so dark you're basically a silhouette in a horror movie
+        # A score is explanatory only; every measured requirement must pass.
+        failed_ids = {c.id for c in checks if not c.passed}
+        correctable = {"head_ratio", "eye_alignment", "horizontal_centering", "crown_clearance", "aspect_ratio"}
+        if not doc_spec.preserve_original or doc_spec.allow_background_replacement:
+            correctable |= {"bg_uniformity", "shadow_elimination"}
+        compliant = bool(checks) and not failed_ids
+        preparable = bool(checks) and crown_result.detected and failed_ids <= correctable
         brightness = quality_report.exposure.mean_brightness
-        critical_unrecoverable_failure = (
-            not face_result.detected
-            or face_result.face_count > 1
-            or abs(face_result.yaw) > 18.0
-            or abs(face_result.pitch) > 18.0
-            or (
-                face_result.detected
-                and face_result.eye_aspect_ratio_left < 0.12
-                and face_result.eye_aspect_ratio_right < 0.12
-            )
-            or brightness < 25
-        )
-
-        compliant = (not critical_unrecoverable_failure) and (overall_score >= 65.0)
-        if doc_spec.preserve_original:
-            # These cannot be repaired by cropping/resizing an unaltered photo.
-            required_ids = {"bg_uniformity", "optical_axis_rotation", "expression", "eye_visibility", "shoulder_symmetry", "red_eye", "shadow_elimination", "specular_highlights", "exposure_histogram"}
-            if doc_spec.allow_background_replacement:
-                required_ids -= {"bg_uniformity", "shadow_elimination"}
-            compliant = compliant and all(c.passed for c in checks if c.id in required_ids)
 
         # Coaching feedback
         coaching = []
@@ -662,12 +599,12 @@ class ICAOValidator(BaseValidator):
             elif brightness < 25:
                 coaching.append("Photo is severely underexposed. Retake in daylight or good bilateral lighting.")
 
-            failed_checks = [c for c in checks if not c.passed]
+            failed_checks = sorted((c for c in checks if not c.passed), key=lambda c: c.id in correctable)
             if failed_checks:
                 for c in failed_checks:
                     if c.feedback and c.feedback not in coaching:
                         coaching.append(c.feedback)
-                    if len(coaching) >= 3:
+                    if len(coaching) >= 5:
                         break
 
         # Deterministic certificate ID
@@ -682,6 +619,8 @@ class ICAOValidator(BaseValidator):
 
         return ValidationResult(
             compliant=compliant,
+            preparable=preparable,
+            manualReviewRequired=[("Glasses are not allowed for this preset. " if doc_spec.glasses_allowed is False else "Check the eyewear rules for your application. ") + "Check head coverings, natural skin colour and editing history manually. Automated measurements do not guarantee acceptance by the issuing authority."],
             score=overall_score,
             country=CountryInfo(
                 code=country_code,

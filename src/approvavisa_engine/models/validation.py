@@ -74,6 +74,9 @@ class ValidationResult(BaseModel):
     """Complete validation result — matches the frontend TypeScript interface."""
 
     compliant: bool
+    preparable: bool = False
+    processingReady: bool = False
+    manualReviewRequired: List[str] = []
     score: float
     country: CountryInfo
     metrics: MetricsInfo

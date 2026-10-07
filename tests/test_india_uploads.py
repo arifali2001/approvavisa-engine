@@ -90,3 +90,17 @@ async def test_uncroppable_passport_is_rejected_before_checkout(spec_registry):
         face_analyzer=face,crown_detector=crown,_="test")
     assert not result.compliant and result.certificateId == ""
     preview.generate_preview_specimen.assert_not_called()
+
+
+@pytest.mark.asyncio
+async def test_compression_is_reaudited_before_output_release(spec_registry):
+    proc, _ = processor()
+    validator, preview = Mock(), Mock()
+    validator.validate.side_effect = [SimpleNamespace(compliant=True, checks=[]),
+        SimpleNamespace(compliant=True, checks=[]), SimpleNamespace(compliant=False, checks=[])]
+    source = np.full((1000,1000,3),245,dtype=np.uint8)
+    preview.generate.side_effect = lambda image, *args: image
+    result = await process_photo(ProcessRequest(image=encode_image_base64(source),
+        country_code="IN", remove_background=False), registry=spec_registry,
+        processor=proc, validator=validator, preview_gen=preview, _="test")
+    assert not result.success and result.processed_image is None

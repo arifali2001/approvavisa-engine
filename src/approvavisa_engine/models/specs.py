@@ -40,6 +40,11 @@ class DocumentSpec(BaseModel):
     max_pitch: Optional[float] = None
     max_roll: Optional[float] = None
     glasses_allowed: Optional[bool] = None
+    smile_allowed: bool = False
+    eye_height_min: Optional[float] = None
+    eye_height_max: Optional[float] = None
+    editing_policy: str = "unverified"
+
 
 
 class CountrySpec(BaseModel):

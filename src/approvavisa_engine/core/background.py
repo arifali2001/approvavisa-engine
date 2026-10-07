@@ -76,6 +76,7 @@ class RembgBackgroundEngine(BaseBackgroundEngine):
         self._model_name = model_name
         self._alpha_matting = enable_alpha_matting
         self._session = None
+        self._portrait_segmenter = None
 
     def _get_session(self):
         if self._session is None:
@@ -85,6 +86,24 @@ class RembgBackgroundEngine(BaseBackgroundEngine):
             except Exception as e:
                 logger.error(f"Failed to create rembg session: {e}")
         return self._session
+
+    def _portrait_confidence(self, image):
+        """A person-specific mask prevents general-object matting from keeping scenery."""
+        import mediapipe as mp
+        from approvavisa_engine.core.crown_detector import _ensure_model
+        if self._portrait_segmenter is None:
+            model = _ensure_model(
+                "https://storage.googleapis.com/mediapipe-models/image_segmenter/"
+                "selfie_multiclass_256x256/float32/1/selfie_multiclass_256x256.tflite",
+                "selfie_multiclass_256x256.tflite")
+            self._portrait_segmenter = mp.tasks.vision.ImageSegmenter.create_from_options(
+                mp.tasks.vision.ImageSegmenterOptions(base_options=mp.tasks.BaseOptions(model_asset_path=model),
+                    output_confidence_masks=True))
+        result = self._portrait_segmenter.segment(mp.Image(image_format=mp.ImageFormat.SRGB,
+            data=cv2.cvtColor(image, cv2.COLOR_BGR2RGB)))
+        if len(result.confidence_masks) != 6:
+            raise ValueError("Portrait segmentation returned an invalid mask")
+        return np.squeeze(1.0 - result.confidence_masks[0].numpy_view().copy())
 
     def _refine_alpha(self, image: np.ndarray, alpha: np.ndarray) -> np.ndarray:
         """Multi-stage alpha refinement for production-quality edges.
@@ -186,9 +205,9 @@ class RembgBackgroundEngine(BaseBackgroundEngine):
 
             session = self._get_session()
 
-            # rembg expects BGR input, returns BGRA
+            # NumPy inputs and outputs in rembg use RGB/RGBA, not OpenCV BGR.
             output_bgra = remove(
-                image,
+                cv2.cvtColor(image, cv2.COLOR_BGR2RGB),
                 session=session,
                 alpha_matting=self._alpha_matting,
                 alpha_matting_foreground_threshold=240,
@@ -202,17 +221,22 @@ class RembgBackgroundEngine(BaseBackgroundEngine):
             # Extract alpha channel
             if output_bgra.shape[2] == 4:
                 alpha_raw = output_bgra[:, :, 3]
-                bgr = output_bgra[:, :, :3]
+                bgr = cv2.cvtColor(output_bgra[:, :, :3], cv2.COLOR_RGB2BGR)
             else:
                 alpha_raw = np.ones(output_bgra.shape[:2], dtype=np.uint8) * 255
-                bgr = output_bgra
+                bgr = cv2.cvtColor(output_bgra, cv2.COLOR_RGB2BGR)
 
             # Production refinement pipeline
+            person_confidence = self._portrait_confidence(image)
+            person_alpha = np.clip((person_confidence - 0.25) / 0.5, 0, 1)
+            alpha_raw = np.minimum(alpha_raw, (person_alpha * 255).astype(np.uint8))
             alpha_refined = self._refine_alpha(image, alpha_raw)
 
             # Defringe: remove dark edge contamination
             bg_color_bgr = np.array(bg_color[::-1], dtype=np.float32)  # RGB -> BGR
-            bgr_clean = self._defringe(bgr, alpha_refined, bg_color_bgr)
+            # rembg returns straight source RGB, not premultiplied foreground.
+            # Un-premultiplying it against the new backdrop creates dark halos.
+            bgr_clean = bgr
 
             # Final alpha compositing
             alpha_f = alpha_refined.astype(np.float32) / 255.0

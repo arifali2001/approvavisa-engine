@@ -17,6 +17,7 @@ import urllib.request
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from pathlib import Path
+from types import SimpleNamespace
 from typing import List, Optional, Tuple
 
 import cv2
@@ -187,6 +188,37 @@ class MediaPipeFaceAnalyzer(BaseFaceAnalyzer):
         except Exception as e:
             result.errors.append(f"MediaPipe processing failed: {e}")
             return result
+
+        if not mp_result.face_landmarks:
+            # Bounded multi-scale search; every region uses the same face model.
+            # Measurements are mapped back to native pixels, never upscaled detail.
+            proposals = []
+            for divisor in (2,3):
+                side = min(min(w,h), max(128,min(w,h)//divisor))
+                for y in (0,(h-side)//2,h-side):
+                    for x in (0,(w-side)//2,w-side):
+                        proposals.append((x,y,side,side))
+            confirmed = []
+            centres = []
+            for x,y,fw,fh in dict.fromkeys(proposals):
+                x0,y0 = max(0,int(x)),max(0,int(y))
+                x1,y1 = min(w,int(x+fw)),min(h,int(y+fh))
+                region = np.ascontiguousarray(rgb[y0:y1,x0:x1])
+                try:
+                    proposal = self._get_landmarker().detect(mp.Image(image_format=mp.ImageFormat.SRGB,data=region))
+                except Exception as error:
+                    result.errors.append(f"Face region analysis failed: {error}")
+                    return result
+                for points in proposal.face_landmarks:
+                    cx = x0 + points[1].x*(x1-x0)
+                    cy = y0 + points[1].y*(y1-y0)
+                    face_width = (max(lm.x for lm in points)-min(lm.x for lm in points))*(x1-x0)
+                    if any(np.hypot(cx-px,cy-py) < max(10,face_width*0.4) for px,py in centres):
+                        continue
+                    centres.append((cx,cy))
+                    confirmed.append([SimpleNamespace(x=(x0+lm.x*(x1-x0))/w,
+                        y=(y0+lm.y*(y1-y0))/h,z=lm.z*(x1-x0)/w) for lm in points])
+            mp_result = SimpleNamespace(face_landmarks=confirmed)
 
         if not mp_result.face_landmarks:
             result.errors.append("No face detected in the image.")

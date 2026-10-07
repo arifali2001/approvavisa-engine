@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+import base64
 
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
@@ -16,11 +17,12 @@ from approvavisa_engine.api.deps import (
     get_validator,
     verify_api_key,
 )
+from approvavisa_engine.core.edited_preparation import prepare_edited_photo
 from approvavisa_engine.core.crown_detector import BaseCrownDetector
 from approvavisa_engine.core.face_analyzer import BaseFaceAnalyzer
-from approvavisa_engine.core.image_utils import decode_base64_image, encode_image_base64
+from approvavisa_engine.core.image_utils import decode_base64_image, encode_image_base64, encode_document_image
 from approvavisa_engine.core.photo_processor import BasePhotoProcessor
-from approvavisa_engine.core.preview import BasePreviewGenerator, generate_draft_preview
+from approvavisa_engine.core.preview import BasePreviewGenerator
 from approvavisa_engine.core.spec_registry import BaseSpecRegistry
 from approvavisa_engine.core.validator import BaseValidator
 from approvavisa_engine.models.validation import ValidationResult
@@ -36,6 +38,7 @@ class ValidateRequest(BaseModel):
     image: str  # base64-encoded image
     country_code: str
     document_type: str = "Passport"
+    editing_mode: bool = False
 
 
 @router.post("/validate", response_model=ValidationResult)
@@ -74,6 +77,24 @@ async def validate_photo(
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Invalid image data: {e}")
 
+    if request.editing_mode:
+        prepared = prepare_edited_photo(image, country, request.document_type, doc_spec,
+            processor, validator, face_analyzer)
+        if prepared.get("success"):
+            audit = prepared["audit"]
+            clean = decode_base64_image(prepared["encoded_image"])
+            face = face_analyzer.analyze(clean, camera_matrix=prepared.get("camera_matrix"))
+            crown = crown_detector.detect_crown(clean)
+            specimen = preview_gen.generate_preview_specimen(clean, doc_spec, face, crown)
+            audit.preview_image = encode_image_base64(specimen, dpi=doc_spec.dpi)
+            return audit
+        failed = validator.validate(image=image, country_code=country.code, document_type=request.document_type,
+            doc_spec=doc_spec, country_name=country.name, country_flag=country.flag)
+        failed.compliant = False
+        failed.certificateId = ""
+        failed.retakeCoaching = [prepared.get("message", "Photo preparation failed. Please retry.")]
+        return failed
+
     try:
         result = validator.validate(
             image=image,
@@ -84,7 +105,7 @@ async def validate_photo(
             country_flag=country.flag,
         )
 
-        draft_only = not result.compliant
+        draft_only = not (result.compliant or getattr(result, "preparable", False))
         if draft_only:
             # Allow an unapproved crop for otherwise usable passport portraits.
             # Invalid subjects/pose/lighting must still stop before preparation.
@@ -103,32 +124,38 @@ async def validate_photo(
             )
             if proc_res.get("success") and proc_res.get("processed_image") is not None:
                 clean_processed = proc_res["processed_image"]
-                if doc_spec.preserve_original:
-                    output_audit = validator.validate(
-                        image=clean_processed, country_code=country.code,
-                        document_type=request.document_type, doc_spec=doc_spec.model_copy(update={"allow_background_replacement": False}),
-                        country_name=country.name, country_flag=country.flag,
-                        camera_matrix=proc_res.get("camera_matrix"),
-                    )
-                    if draft_only:
-                        output_audit.compliant = False
-                        output_audit.certificateId = ""
-                        output_audit.processed_image = None
-                        output_audit.preview_image = encode_image_base64(generate_draft_preview(clean_processed))
-                        if output_audit.retakeCoaching and output_audit.checks:
-                            output_audit.retakeCoaching = [c.feedback for c in sorted(output_audit.checks, key=lambda c: c.id != "bg_uniformity") if not c.passed and c.feedback]
-                        output_audit.retakeCoaching.append("Draft crop only. The original background is preserved; this passport route requires a plain white backdrop.")
-                        return output_audit
-                    framing_ok = all(c.passed for c in output_audit.checks
-                        if c.id in {"head_ratio", "horizontal_centering"})
-                    if not output_audit.compliant or not framing_ok:
-                        result.compliant = False
-                        result.certificateId = ""
-                        result.retakeCoaching = ["The passport crop failed assessment. Retake with your full head and shoulders visible on a white backdrop."]
-                        return result
-                    # Show the prepared photo's measurements, not the uncropped upload's.
-                    result = output_audit
-                
+                try:
+                    encoded = encode_document_image(clean_processed, doc_spec, doc_spec.dpi)
+                except ValueError as error:
+                    result.compliant = False
+                    result.certificateId = ""
+                    result.retakeCoaching = [str(error)]
+                    return result
+                clean_processed = decode_base64_image(base64.b64encode(encoded).decode("ascii"))
+                output_audit = validator.validate(
+                    image=clean_processed, country_code=country.code,
+                    document_type=request.document_type, doc_spec=doc_spec.model_copy(update={"allow_background_replacement": False}),
+                    country_name=country.name, country_flag=country.flag,
+                    camera_matrix=proc_res.get("camera_matrix"),
+                )
+                if draft_only:
+                    output_audit.compliant = False
+                    output_audit.certificateId = ""
+                    output_audit.processed_image = None
+                    face = face_analyzer.analyze(clean_processed, camera_matrix=proc_res.get("camera_matrix"))
+                    crown = crown_detector.detect_crown(clean_processed)
+                    specimen = preview_gen.generate_preview_specimen(clean_processed, doc_spec, face, crown)
+                    output_audit.preview_image = encode_image_base64(specimen, dpi=doc_spec.dpi)
+                    if output_audit.retakeCoaching and output_audit.checks:
+                        output_audit.retakeCoaching = [c.feedback for c in sorted(output_audit.checks, key=lambda c: c.id != "bg_uniformity") if not c.passed and c.feedback]
+                    output_audit.retakeCoaching.append("Draft crop only. The original background is preserved; this passport route requires a plain white backdrop.")
+                    return output_audit
+                if not output_audit.compliant:
+                    output_audit.certificateId = ""
+                    return output_audit
+                # Show the prepared photo's measurements, not the uncropped upload's.
+                result = output_audit
+
                 # Analyze landmarks on clean cropped photo for pixel-perfect scale alignment
                 f_res = face_analyzer.analyze(clean_processed, camera_matrix=proc_res["camera_matrix"]) if proc_res.get("camera_matrix") is not None else face_analyzer.analyze(clean_processed)
                 c_res = crown_detector.detect_crown(clean_processed)
@@ -140,10 +167,10 @@ async def validate_photo(
                     face_result=f_res,
                     crown_result=c_res,
                 )
-                if proc_res.get("background_replaced") and doc_spec.preserve_original:
+                if proc_res.get("background_replaced"):
                     result.backgroundReplaced = True
                     result.certificateId = ""
-                    result.processingWarnings = ["Edited photo: background replaced. India passport guidance asks for unaltered photos; confirm acceptance with your receiving mission."]
+                    result.processingWarnings = ["Edited photo: background replaced; this is not an unaltered original. Confirm that your specific application route permits this edit."]
                 result.processed_image = encode_image_base64(specimen)
             else:
                 result.compliant = False

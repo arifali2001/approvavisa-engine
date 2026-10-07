@@ -17,8 +17,15 @@ def decode_base64_image(data: str) -> np.ndarray:
     if "," in data:
         data = data.split(",", 1)[1]
 
-    img_bytes = base64.b64decode(data)
+    if len(data) > 20_000_000:
+        raise ValueError("Photo exceeds the 15 MB input limit.")
+    img_bytes = base64.b64decode(data, validate=True)
     pil_img = Image.open(io.BytesIO(img_bytes))
+    if pil_img.format not in {"JPEG", "PNG", "WEBP"} or getattr(pil_img, "n_frames", 1) != 1:
+        raise ValueError("Upload a single JPG, PNG or WebP photograph.")
+    width, height = pil_img.size
+    if max(width, height) > 8192 or width * height > 24_000_000:
+        raise ValueError("Photo dimensions exceed 8192 pixels per side or 24 megapixels.")
 
     # Auto-correct EXIF orientation (phone cameras encode rotation in EXIF)
     pil_img = ImageOps.exif_transpose(pil_img)
@@ -188,3 +195,15 @@ def ciede2000_delta_e(lab1: np.ndarray, lab2: np.ndarray) -> float:
     )
 
     return float(dE)
+
+
+def encode_document_image(image, doc_spec, dpi, max_size_kb=None):
+    """Shared preview/download encoding contract; never release out-of-range bytes."""
+    limits = [n for n in (doc_spec.max_file_size_bytes, max_size_kb * 1024 if max_size_kb else None) if n]
+    maximum = min(limits) if limits else None
+    encoded = encode_image_bytes(image, dpi=dpi, max_size_kb=maximum / 1024 if maximum else None)
+    if maximum and len(encoded) > maximum:
+        raise ValueError("Photo could not be encoded within the upload size limit. Retake with a simpler background.")
+    if doc_spec.min_file_size_bytes and len(encoded) < doc_spec.min_file_size_bytes:
+        raise ValueError("Photo is below the portal minimum file size. Upload a higher-detail original.")
+    return encoded

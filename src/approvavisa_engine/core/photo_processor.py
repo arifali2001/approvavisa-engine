@@ -1,16 +1,12 @@
 """Photo processing: crop, resize, background replacement, print sheet tiling.
 
-Studio-grade pipeline matching premier competitor standards:
-- Head bounding box visual centering (guarantees equal left/right margins on frontal and angled poses)
-- Precise ICAO biometric ratios: 59.8% head height, 56.9% eye baseline elevation
-- Seamless clothing & torso extension to the frame bottom border
-- Intelligent canvas padding for 100% exact aspect ratio preservation
-- Lanczos-4 600 DPI resampling with subtle optical micro-contrast sharpening
+Crops retain source pixels and preserve geometry for digital and printed outputs.
 """
 
 from __future__ import annotations
 
 import logging
+import math
 import re
 from abc import ABC, abstractmethod
 from typing import Optional, Tuple
@@ -38,12 +34,14 @@ class BasePhotoProcessor(ABC):
         remove_background: bool = True,
         output_dpi: int = 600,
         max_file_size_kb: Optional[int] = None,
+        include_print_sheet: bool = True,
+        allow_background_padding: bool = False,
     ) -> dict:
         ...
 
 
 class StandardPhotoProcessor(BasePhotoProcessor):
-    """Studio-grade photo processor with head visual centering and natural torso extension."""
+    """Photo processor with independent digital and physical crops."""
 
     def __init__(
         self,
@@ -62,10 +60,11 @@ class StandardPhotoProcessor(BasePhotoProcessor):
         remove_background: bool = True,
         output_dpi: int = 600,
         max_file_size_kb: Optional[int] = None,
+        include_print_sheet: bool = True,
+        allow_background_padding: bool = False,
     ) -> dict:
         h, w = image.shape[:2]
         bg_color = hex_to_rgb(doc_spec.bg_color)
-        bg_bgr = bg_color[::-1]
 
         # ── 1. Background Removal & Backdrop Replacement ──
         background_replaced = False
@@ -74,15 +73,10 @@ class StandardPhotoProcessor(BasePhotoProcessor):
             if bg_result.success and bg_result.image is not None:
                 background_replaced = True
                 isolated = bg_result.image
-                alpha = bg_result.alpha if bg_result.alpha is not None else np.full((h, w), 255, dtype=np.uint8)
             else:
-                if doc_spec.allow_background_replacement:
-                    return {"success": False, "message": "Background replacement failed. Retry with a clearer portrait."}
-                isolated = image.copy()
-                alpha = np.full((h, w), 255, dtype=np.uint8)
+                return {"success": False, "message": "Background replacement failed. Retry with a clearer portrait."}
         else:
             isolated = image.copy()
-            alpha = np.full((h, w), 255, dtype=np.uint8)
 
         # ── 2. Face Landmark Analysis ──
         face_result = self._face.analyze(isolated)
@@ -94,6 +88,13 @@ class StandardPhotoProcessor(BasePhotoProcessor):
         # ── 3. Hair Crown Detection ──
         crown_result = self._crown.detect_crown(isolated)
         crown_y = crown_result.crown_y if crown_result.detected else face_result.forehead_top[1]
+        # Include the detector's conservative soft-edge silhouette. The hard
+        # crown threshold can miss fine hair that becomes visible after resize.
+        subject_mask = getattr(crown_result, "subject_mask", None)
+        if crown_result.detected and isinstance(subject_mask, np.ndarray):
+            subject_rows = np.flatnonzero(np.any(subject_mask, axis=1))
+            if subject_rows.size:
+                crown_y = min(crown_y, int(subject_rows[0]))
         chin_y = face_result.chin[1]
 
         # ── 4. Biometric Sizing ──
@@ -101,17 +102,21 @@ class StandardPhotoProcessor(BasePhotoProcessor):
         if match:
             min_pct = float(match.group(1)) / 100.0
             max_pct = float(match.group(2)) / 100.0
-            target_head_ratio = min_pct + (max_pct - min_pct) * 0.50  # ~59.8% (competitor benchmark)
+            target_head_ratio = (min_pct + max_pct) / 2
         else:
-            target_head_ratio = 0.598
+            min_pct, max_pct = 0.50, 0.69
+            target_head_ratio = (min_pct + max_pct) / 2
 
         face_h = chin_y - crown_y
         if face_h <= 0:
             face_h = face_result.face_h
 
         # Compute crop box with exact document aspect ratio
-        aspect = float(doc_spec.width) / float(doc_spec.height)
+        aspect = (doc_spec.digital_width_px / doc_spec.digital_height_px) if doc_spec.digital_width_px and doc_spec.digital_height_px else float(doc_spec.width) / float(doc_spec.height)
         crop_h = int(face_h / target_head_ratio)
+        max_crop_h = min(h, int(w / aspect))
+        if crop_h > max_crop_h and face_h / max_crop_h <= max_pct:
+            crop_h = max_crop_h
         crop_w = int(crop_h * aspect)
 
         # Keep the entire head in frame for close-up passport crops.
@@ -133,36 +138,44 @@ class StandardPhotoProcessor(BasePhotoProcessor):
         head_center_x = face_result.face_x + face_result.face_w // 2
         crop_x = head_center_x - crop_w // 2
 
-        # ── 6. Canvas Padding & Seamless Torso Extension ──
-        # What happens when a user uploads a photo cropped tightly at the collarbone?
-        # Without torso extension, the bottom of the passport photo shows an awkward white gap,
-        # making the applicant look like a floating decapitated head.
-        # We gently extrude the bottom clothing pixel slice downward to the canvas border.
+        # Eye placement is a preference; it must never cut into the head.
+        # Match the existing 3 mm clearance audit, with one source pixel of
+        # rounding tolerance. Keep the chin inside the opposite edge too.
+        if crown_result.detected:
+            top_clearance = math.ceil(crop_h * 3.0 / doc_spec.height) + 1
+            safe_y_min = chin_y + 2 - crop_h
+            safe_y_max = crown_y - top_clearance
+            if safe_y_min > safe_y_max:
+                return {"success": False, "message": "The required head size leaves insufficient room for the full head. Please review the document framing requirements."}
+            crop_y = min(max(crop_y, safe_y_min), safe_y_max)
+            # Only shift into the source when that also preserves the head.
+            bounded_min = max(0, safe_y_min)
+            bounded_max = min(h - crop_h, safe_y_max)
+            if bounded_min <= bounded_max:
+                crop_y = min(max(crop_y, bounded_min), bounded_max)
+        elif crop_h <= h:
+            crop_y = min(max(0, crop_y), h - crop_h)
+        if crop_w <= w:
+            crop_x = min(max(0, crop_x), w - crop_w)
         pad_left = max(0, -crop_x)
         pad_top = max(0, -crop_y)
         pad_right = max(0, (crop_x + crop_w) - w)
         pad_bottom = max(0, (crop_y + crop_h) - h)
 
-        if doc_spec.preserve_original and any((pad_left, pad_top, pad_right, pad_bottom)):
+        needs_padding = any((pad_left, pad_top, pad_right, pad_bottom))
+        if needs_padding and not allow_background_padding:
             return {"success": False, "message": "Retake farther from the camera: the full head and shoulders must fit without generated padding."}
 
-        canvas_h = h + pad_top + pad_bottom
-        canvas_w = w + pad_left + pad_right
-        canvas = np.full((canvas_h, canvas_w, 3), bg_bgr, dtype=np.uint8)
-
-        # Place the subject on the padded canvas
-        canvas[pad_top : pad_top + h, pad_left : pad_left + w] = isolated
-
-        # Torso extension: extend clothing to the bottom frame (no floating heads allowed!)
-        if pad_bottom > 0:
-            bottom_row = isolated[-1:, :]
-            for r in range(pad_bottom):
-                canvas[pad_top + h + r, pad_left : pad_left + w] = bottom_row[0]
-
-        # ── 7. Extract Exact Crop ──
-        fx = crop_x + pad_left
-        fy = crop_y + pad_top
-        cropped = canvas[fy : fy + crop_h, fx : fx + crop_w]
+        if needs_padding:
+            if crop_w * crop_h > 24_000_000:
+                return {"success": False, "message": "Crop exceeds supported canvas dimensions."}
+            # Only a solid backdrop is added. No face or clothing pixels are generated.
+            canvas = cv2.copyMakeBorder(isolated, pad_top, pad_bottom, pad_left, pad_right,
+                cv2.BORDER_CONSTANT, value=bg_color[::-1])
+            x, y = crop_x + pad_left, crop_y + pad_top
+            cropped = canvas[y:y + crop_h, x:x + crop_w]
+        else:
+            cropped = isolated[crop_y : crop_y + crop_h, crop_x : crop_x + crop_w]
 
         if cropped.shape[0] == 0 or cropped.shape[1] == 0:
             return {"success": False, "message": "Crop box calculation error."}
@@ -173,11 +186,22 @@ class StandardPhotoProcessor(BasePhotoProcessor):
         resized = cv2.resize(cropped, (out_w, out_h), interpolation=cv2.INTER_LANCZOS4)
 
         # ── 9. Optical Micro-Contrast Sharpening ──
-        g_fine = cv2.GaussianBlur(resized, (0, 0), 1.0)
-        sharpened = resized if doc_spec.preserve_original or not doc_spec.allow_sharpening else cv2.addWeighted(resized, 1.15, g_fine, -0.15, 0)
+        sharpened = resized
+        if not doc_spec.preserve_original and doc_spec.allow_sharpening:
+            g_fine = cv2.GaussianBlur(resized, (0, 0), 1.0)
+            sharpened = cv2.addWeighted(resized, 1.15, g_fine, -0.15, 0)
 
         # ── 10. Generate 4x6 Tiled Print Sheet ──
-        print_sheet = self._generate_print_sheet(sharpened, doc_spec, output_dpi)
+        print_sheet = None
+        if include_print_sheet:
+            print_w = int(doc_spec.width / 25.4 * output_dpi)
+            print_h = int(doc_spec.height / 25.4 * output_dpi)
+            print_spec = doc_spec.model_copy(update={"digital_width_px": print_w, "digital_height_px": print_h})
+            print_result = self.process(isolated, print_spec, remove_background=False,
+                output_dpi=output_dpi, include_print_sheet=False, allow_background_padding=allow_background_padding)
+            if not print_result.get("success"):
+                return {"success": False, "message": "The printed crop needs more room around the head and shoulders. Please retake farther away."}
+            print_sheet = self._generate_print_sheet(print_result["processed_image"], doc_spec, output_dpi)
 
         return {
             "success": True,
@@ -189,7 +213,7 @@ class StandardPhotoProcessor(BasePhotoProcessor):
                 [w * out_w / crop_w, 0, (w / 2 - crop_x) * out_w / crop_w],
                 [0, w * out_h / crop_h, (h / 2 - crop_y) * out_h / crop_h],
                 [0, 0, 1],
-            ], dtype=np.float64) if doc_spec.preserve_original else None,
+            ], dtype=np.float64),
             "print_sheet": print_sheet,
             "width_px": out_w,
             "height_px": out_h,
