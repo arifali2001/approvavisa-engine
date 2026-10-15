@@ -1,9 +1,10 @@
 """Spain DNI and passport: 26 × 32 mm (32 × 26 mm alto × ancho), white background.
 
-Sources checked 15 Oct 2026:
-- Pasaporte: Ministerio del Interior, "Procedimiento de expedición" ("tamaño 32 x 26 mm").
-- DNI: Policía Nacional requirements ("32 por 26 milímetros"), via a municipal reproduction;
-  confirm on a primary Policía Nacional page before relying on it in marketing copy.
+Sources checked 16 Oct 2026 (both Ministerio del Interior):
+- Pasaporte, "Procedimiento de expedición": "tamaño 32 x 26 mm, con fondo uniforme, blanco, liso".
+- DNI, "Documentación necesaria para su tramitación": "tamaño 32 por 26 milímetros, con fondo
+  uniforme blanco y liso".
+32 × 26 mm is alto × ancho, so width 26 and height 32.
 Spain publishes no numeric head-size or eye-line values. The 70-80 % head size is an engine
 heuristic; no eye-line range is set, because the generic 55-65 % one (copied from the Schengen
 visa entry) cannot be met together with a 70-80 % head and the 3 mm crown clearance on a
@@ -35,8 +36,8 @@ def test_spain_documents_are_26_by_32_mm_on_white(spec_registry, doc_type):
     assert doc.dpi == 600
     # In-person documents: no official digital pixel size, so none is invented.
     assert doc.digital_width_px is None and doc.digital_height_px is None
-    assert doc.last_verified == "2026-10-15"
-    assert doc.source_url.startswith("https://")
+    assert doc.last_verified == "2026-10-16"
+    assert doc.source_url.startswith("https://www.interior.gob.es/")
     assert doc.eye_height_min is None and doc.eye_height_max is None, "Spain publishes no eye-line rule"
 
 
