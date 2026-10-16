@@ -14,6 +14,7 @@ from typing import Optional, Tuple
 import cv2
 import numpy as np
 
+from approvavisa_engine.config import settings
 from approvavisa_engine.core.background import BaseBackgroundEngine
 from approvavisa_engine.core.crown_detector import BaseCrownDetector
 from approvavisa_engine.core.face_analyzer import BaseFaceAnalyzer
@@ -21,6 +22,56 @@ from approvavisa_engine.core.image_utils import hex_to_rgb
 from approvavisa_engine.models.specs import DocumentSpec
 
 logger = logging.getLogger(__name__)
+
+
+def eye_line_angle(left_eye: Tuple[int, int], right_eye: Tuple[int, int]) -> float:
+    """In-plane tilt of the eye line in degrees (positive = the eye on the image right is lower)."""
+    (ax, ay), (bx, by) = sorted((left_eye, right_eye))
+    if bx == ax:
+        return 0.0
+    return math.degrees(math.atan2(by - ay, bx - ax))
+
+
+def level_eye_line(
+    image: np.ndarray, left_eye: Tuple[int, int], right_eye: Tuple[int, int],
+    bg_bgr: Tuple[int, int, int] = (255, 255, 255),
+) -> Tuple[np.ndarray, float, Optional[np.ndarray]]:
+    """Straighten a small head tilt by rotating the whole photo around the eye midpoint.
+
+    A rigid rotation, as a photographer straightens a shot: proportions and facial features are
+    unchanged and nothing is generated. The corners the rotation uncovers get the solid backdrop
+    colour. Returns (image, applied degrees, mask of uncovered pixels); tilts outside the
+    configured window are returned untouched with 0 and no mask.
+    """
+    angle = eye_line_angle(left_eye, right_eye)
+    if not settings.auto_level_min_roll_deg <= abs(angle) <= settings.auto_level_max_roll_deg:
+        return image, 0.0, None
+    h, w = image.shape[:2]
+    center = ((left_eye[0] + right_eye[0]) / 2.0, (left_eye[1] + right_eye[1]) / 2.0)
+    matrix = cv2.getRotationMatrix2D(center, angle, 1.0)
+    leveled = cv2.warpAffine(image, matrix, (w, h), flags=cv2.INTER_CUBIC,
+        borderMode=cv2.BORDER_CONSTANT, borderValue=tuple(int(c) for c in bg_bgr))
+    covered = cv2.warpAffine(np.full((h, w), 255, np.uint8), matrix, (w, h), flags=cv2.INTER_NEAREST,
+        borderMode=cv2.BORDER_CONSTANT, borderValue=0)
+    return leveled, round(angle, 2), covered == 0
+
+
+def uncovered_edge_touches_subject(image: np.ndarray, uncovered: np.ndarray, bg_bgr: Tuple[int, int, int],
+                                   box: Tuple[int, int, int, int]) -> bool:
+    """True when an uncovered corner borders the person inside box (x0, y0, x1, y1).
+
+    Backdrop next to the corner is invisible after filling; clothing or hair next to it would
+    show a straight cut-off edge, which looks edited.
+    """
+    x0, y0, x1, y1 = box
+    if x1 <= x0 or y1 <= y0:
+        return False
+    hole = uncovered[y0:y1, x0:x1].astype(np.uint8)
+    if not hole.any():
+        return False
+    rim = cv2.dilate(hole, np.ones((7, 7), np.uint8)).astype(bool) & ~hole.astype(bool)
+    diff = np.abs(image[y0:y1, x0:x1].astype(np.int16) - np.array(bg_bgr, np.int16)).max(axis=2)
+    return int(np.count_nonzero(rim & (diff > 40))) > max(3, (x1 - x0) // 100)
 
 
 class BasePhotoProcessor(ABC):
@@ -62,6 +113,7 @@ class StandardPhotoProcessor(BasePhotoProcessor):
         max_file_size_kb: Optional[int] = None,
         include_print_sheet: bool = True,
         allow_background_padding: bool = False,
+        level_eye_line_tilt: bool = True,
     ) -> dict:
         h, w = image.shape[:2]
         bg_color = hex_to_rgb(doc_spec.bg_color)
@@ -84,6 +136,21 @@ class StandardPhotoProcessor(BasePhotoProcessor):
             face_result = self._face.analyze(image)
             if not face_result.detected:
                 return {"success": False, "message": "No face detected in the image."}
+
+        # ── 2b. Eye-Line Leveling ──
+        # Only on a replaced (solid) backdrop and for documents that allow editing: a rotated
+        # original background would show its own tilt.
+        leveled_deg, uncovered = 0.0, None
+        bg_bgr = tuple(bg_color[::-1])
+        if level_eye_line_tilt and background_replaced and not doc_spec.preserve_original:
+            leveled, leveled_deg, uncovered = level_eye_line(
+                isolated, face_result.left_eye_center, face_result.right_eye_center, bg_bgr)
+            if leveled_deg:
+                leveled_face = self._face.analyze(leveled)
+                if leveled_face.detected:
+                    isolated, face_result = leveled, leveled_face
+                else:
+                    leveled_deg = 0.0
 
         # ── 3. Hair Crown Detection ──
         crown_result = self._crown.detect_crown(isolated)
@@ -162,6 +229,14 @@ class StandardPhotoProcessor(BasePhotoProcessor):
         pad_right = max(0, (crop_x + crop_w) - w)
         pad_bottom = max(0, (crop_y + crop_h) - h)
 
+        # A straightened photo whose uncovered corner would cut into the shoulders or hair inside
+        # the crop is prepared unleveled instead: a visible straight edge looks edited.
+        if leveled_deg and uncovered_edge_touches_subject(isolated, uncovered, bg_bgr,
+                (max(0, crop_x), max(0, crop_y), min(w, crop_x + crop_w), min(h, crop_y + crop_h))):
+            return self.process(image, doc_spec, remove_background=remove_background, output_dpi=output_dpi,
+                max_file_size_kb=max_file_size_kb, include_print_sheet=include_print_sheet,
+                allow_background_padding=allow_background_padding, level_eye_line_tilt=False)
+
         needs_padding = any((pad_left, pad_top, pad_right, pad_bottom))
         if needs_padding and not allow_background_padding:
             return {"success": False, "message": "Retake farther from the camera: the full head and shoulders must fit without generated padding."}
@@ -215,6 +290,7 @@ class StandardPhotoProcessor(BasePhotoProcessor):
                 [0, 0, 1],
             ], dtype=np.float64),
             "print_sheet": print_sheet,
+            "leveled_degrees": leveled_deg,
             "width_px": out_w,
             "height_px": out_h,
             "dpi": output_dpi,

@@ -40,6 +40,12 @@ class Settings(BaseSettings):
     min_pose_yaw_tolerance_deg: float = 8.0
     min_pose_pitch_tolerance_deg: float = 20.0
 
+    # Eye-line leveling after background replacement: a small in-plane head tilt is corrected by
+    # rotating the whole photo around the eyes (a camera straighten, no face pixels are changed).
+    # Tilts under the minimum are left alone; tilts over the maximum need a retake.
+    auto_level_min_roll_deg: float = 1.0
+    auto_level_max_roll_deg: float = 8.0
+
     model_config = {"env_file": ".env", "env_file_encoding": "utf-8", "extra": "ignore"}
 
 
