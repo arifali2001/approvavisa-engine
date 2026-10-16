@@ -27,6 +27,10 @@ def prepare_edited_photo(image, country, document_type, spec, processor, validat
     preserve_failures = {"interpupillary_distance", "optical_axis_rotation", "eye_visibility",
         "expression", "facial_perimeter", "compression", "specular_highlights", "exposure_histogram"}
     native_failures = {c.id: c for c in original.checks if not c.passed and c.id in preserve_failures}
+    # Head pose belongs to the person, not the crop: re-estimating it on the resized crop with a
+    # reconstructed camera adds 1-2.5 deg of pitch (measured 2026-10-16), so the upload's own
+    # measurement is kept whether it passed or failed.
+    native_failures.update({c.id: c for c in original.checks if c.id == "optical_axis_rotation"})
     audit.checks = [native_failures.get(c.id, c) for c in audit.checks]
     audit.compliant = all(c.passed for c in audit.checks) and not (spec.preserve_original and not spec.allow_background_replacement)
     audit.certificateId = ""

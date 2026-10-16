@@ -48,3 +48,30 @@ def test_frontal_portrait_still_passes_the_pose_check(spec_registry):
     pose = next(c for c in result.checks if c.id == "optical_axis_rotation")
     assert pose.passed, pose.measured
     assert "8 deg" in pose.required and "20 deg" in pose.required
+
+
+def test_edited_photo_keeps_the_uploads_pose_measurement(spec_registry, monkeypatch):
+    """A pose that passes on the upload must not fail because the crop re-estimates it higher."""
+    from approvavisa_engine.api.deps import get_face_analyzer, get_processor
+    from approvavisa_engine.core.edited_preparation import prepare_edited_photo
+
+    validator = get_validator()
+    real_validate = validator.validate
+    calls = []
+
+    def validate(**kwargs):
+        result = real_validate(**kwargs)
+        calls.append(result)
+        if len(calls) == 2:  # the audit of the prepared crop: simulate the inflated pitch
+            pose = next(c for c in result.checks if c.id == "optical_axis_rotation")
+            pose.passed, pose.measured = False, "Yaw: 4.4 deg / Pitch: 20.8 deg"
+        return result
+
+    monkeypatch.setattr(validator, "validate", validate)
+    portrait = cv2.imread(str(Path(__file__).parent / "fixtures" / "white-background-portrait.jpg"))
+    country = spec_registry.get_by_code("ES")
+    result = prepare_edited_photo(portrait, country, "DNI", spec_registry.get_document_spec("ES", "DNI"),
+        get_processor(), validator, get_face_analyzer())
+    assert result["success"], result.get("message")
+    pose = next(c for c in result["audit"].checks if c.id == "optical_axis_rotation")
+    assert pose.passed and "20.8" not in pose.measured
