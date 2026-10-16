@@ -61,6 +61,17 @@ def _parse_head_size_range(spec_str: str) -> Tuple[float, float]:
     return 50.0, 69.0
 
 
+def pose_limits(doc_spec: DocumentSpec) -> Tuple[float, float]:
+    """Effective (max yaw, max pitch) in degrees for the pose check.
+
+    The document's own limits apply, but never below the configured tolerance floors: the pose is
+    estimated with an approximate camera model, so tighter limits flag faces that look straight.
+    """
+    yaw = max(doc_spec.max_yaw or 0.0, settings.min_pose_yaw_tolerance_deg)
+    pitch = max(doc_spec.max_pitch or 0.0, settings.min_pose_pitch_tolerance_deg)
+    return yaw, pitch
+
+
 def _parse_max_file_size_bytes(spec_str: str) -> int:
     """Parse max file size like '10MB' or '240KB' into bytes."""
     spec_str = spec_str.strip().upper()
@@ -432,8 +443,7 @@ class ICAOValidator(BaseValidator):
         # 13. Yaw/Pitch Angular Rotation
         yaw = abs(face_result.yaw)
         pitch = abs(face_result.pitch)
-        max_angle = doc_spec.max_yaw if doc_spec.max_yaw else 5.0
-        max_pitch = doc_spec.max_pitch or 5.0
+        max_angle, max_pitch = pose_limits(doc_spec)
         pose_passed = yaw < max_angle and pitch < max_pitch if face_result.detected else False
         pose_score = max(0, 100 - (yaw + pitch) * 8) if face_result.detected else 0
 

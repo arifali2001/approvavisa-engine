@@ -34,6 +34,12 @@ class Settings(BaseSettings):
     blur_threshold: float = 50.0
     min_pixels_per_mm: float = 8.0
 
+    # Head pose tolerance floors (degrees). The yaw/pitch estimate uses an approximate camera
+    # model: frontal studio portraits measured up to ~19 deg pitch (2026-10-16), so per-document
+    # limits below these floors flag faces that look straight. A document may allow more, never less.
+    min_pose_yaw_tolerance_deg: float = 8.0
+    min_pose_pitch_tolerance_deg: float = 20.0
+
     model_config = {"env_file": ".env", "env_file_encoding": "utf-8", "extra": "ignore"}
 
 
