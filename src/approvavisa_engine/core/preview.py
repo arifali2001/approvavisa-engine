@@ -38,6 +38,7 @@ class BasePreviewGenerator(ABC):
         doc_spec: DocumentSpec,
         face_result: Optional[FaceAnalysisResult] = None,
         crown_result: Optional[CrownDetectionResult] = None,
+        locale: str = "en",
     ) -> np.ndarray:
         """Bakes biometric measuring scales, dimension brackets, and clear SAMPLE stamp directly into image pixels."""
         ...
@@ -57,6 +58,7 @@ class AnnotatedPreviewGenerator(BasePreviewGenerator):
         doc_spec: DocumentSpec,
         face_result: Optional[FaceAnalysisResult] = None,
         crown_result: Optional[CrownDetectionResult] = None,
+        locale: str = "en",
     ) -> np.ndarray:
         h, w = photo.shape[:2]
 
@@ -88,7 +90,9 @@ class AnnotatedPreviewGenerator(BasePreviewGenerator):
             font_bold = font_pill = font_sub = font_sample = ImageFont.load_default()
 
         # ── 2. Official "SAMPLE" Stamp Badge (Clean, Visible, No Stripes) ──
-        sample_text = "SAMPLE"
+        # locale="de": German stamp and millimetre labels (FotoKlar); default output is unchanged.
+        german = locale == "de"
+        sample_text = "MUSTER" if german else "SAMPLE"
         try:
             sb = font_sample.getbbox(sample_text)
             sw, sh = sb[2] - sb[0], sb[3] - sb[1]
@@ -108,7 +112,7 @@ class AnnotatedPreviewGenerator(BasePreviewGenerator):
         draw.text((sx0, sy0 - 2), sample_text, fill=(200, 30, 30, 240), font=font_sample)
 
         # Subtext under sample: ICAO SPECIMEN
-        sub_txt = "AAMC MyERAS SPECIMEN" if "ERAS" in getattr(doc_spec, "type", "") else "ICAO 9303 SPECIMEN"
+        sub_txt = "AAMC MyERAS SPECIMEN" if "ERAS" in getattr(doc_spec, "type", "") else ("VORSCHAU · ICAO 9303" if german else "ICAO 9303 SPECIMEN")
         try:
             sub_b = font_sub.getbbox(sub_txt)
             sub_w = sub_b[2] - sub_b[0]
@@ -170,7 +174,7 @@ class AnnotatedPreviewGenerator(BasePreviewGenerator):
                 ratio_min = 0.50
                 ratio_max = 0.70
 
-        if is_inches and (doc_h_in <= 5.0):
+        if is_inches and (doc_h_in <= 5.0) and not german:
             head_val = ((chin_y - crown_y) / h) * doc_h_in
             min_in = doc_h_in * ratio_min
             max_in = doc_h_in * ratio_max
@@ -191,6 +195,11 @@ class AnnotatedPreviewGenerator(BasePreviewGenerator):
             eye_label = f"{eye_mm:.0f}mm ({int(doc_h_mm * 0.56)}mm)"
             frame_label = f"{doc_w_mm:.0f}x{doc_h_mm:.0f}mm"
             lh_label = f"{doc_h_mm:.0f}mm"
+            if german:
+                head_label = f"Kopf {head_mm:.0f} mm ({min_head}–{max_head} mm)"
+                eye_label = f"Augen {eye_mm:.0f} mm"
+                frame_label = f"{doc_w_mm:.0f} × {doc_h_mm:.0f} mm"
+                lh_label = f"{doc_h_mm:.0f} mm"
 
         try:
             hb = font_pill.getbbox(head_label)

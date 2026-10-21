@@ -39,6 +39,8 @@ class ValidateRequest(BaseModel):
     country_code: str
     document_type: str = "Passport"
     editing_mode: bool = False
+    # Language of the labels baked into the preview specimen ("en" default, "de" German + mm).
+    preview_locale: str = "en"
 
 
 @router.post("/validate", response_model=ValidationResult)
@@ -85,7 +87,7 @@ async def validate_photo(
             clean = decode_base64_image(prepared["encoded_image"])
             face = face_analyzer.analyze(clean, camera_matrix=prepared.get("camera_matrix"))
             crown = crown_detector.detect_crown(clean)
-            specimen = preview_gen.generate_preview_specimen(clean, doc_spec, face, crown)
+            specimen = preview_gen.generate_preview_specimen(clean, doc_spec, face, crown, locale=request.preview_locale)
             audit.preview_image = encode_image_base64(specimen, dpi=doc_spec.dpi)
             return audit
         failed = validator.validate(image=image, country_code=country.code, document_type=request.document_type,
@@ -144,7 +146,7 @@ async def validate_photo(
                     output_audit.processed_image = None
                     face = face_analyzer.analyze(clean_processed, camera_matrix=proc_res.get("camera_matrix"))
                     crown = crown_detector.detect_crown(clean_processed)
-                    specimen = preview_gen.generate_preview_specimen(clean_processed, doc_spec, face, crown)
+                    specimen = preview_gen.generate_preview_specimen(clean_processed, doc_spec, face, crown, locale=request.preview_locale)
                     output_audit.preview_image = encode_image_base64(specimen, dpi=doc_spec.dpi)
                     if output_audit.retakeCoaching and output_audit.checks:
                         output_audit.retakeCoaching = [c.feedback for c in sorted(output_audit.checks, key=lambda c: c.id != "bg_uniformity") if not c.passed and c.feedback]
@@ -166,6 +168,7 @@ async def validate_photo(
                     doc_spec=doc_spec,
                     face_result=f_res,
                     crown_result=c_res,
+                    locale=request.preview_locale,
                 )
                 if proc_res.get("background_replaced"):
                     result.backgroundReplaced = True
