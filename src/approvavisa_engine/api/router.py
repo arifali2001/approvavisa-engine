@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from fastapi import APIRouter
 
-from approvavisa_engine.api.v1 import health, process, specs, validate
+from approvavisa_engine.api.v1 import health, portrait, process, specs, validate
 
 api_router = APIRouter()
 
@@ -15,3 +15,4 @@ api_router.include_router(health.router, prefix="/v1", tags=["Health"])
 api_router.include_router(specs.router, prefix="/v1", tags=["Specifications"])
 api_router.include_router(validate.router, prefix="/v1", tags=["Validation"])
 api_router.include_router(process.router, prefix="/v1", tags=["Processing"])
+api_router.include_router(portrait.router, prefix="/v1", tags=["Portrait"])
