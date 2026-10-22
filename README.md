@@ -1,6 +1,8 @@
 # ApprovaVisa Engine
 
 [![Live Website](https://img.shields.io/badge/Live-approvavisa.com-00C853?style=flat&logo=google-chrome&logoColor=white)](https://www.approvavisa.com)
+[![Live Website](https://img.shields.io/badge/Live-fotocarnetya.com-00C853?style=flat&logo=google-chrome&logoColor=white)](https://fotocarnetya.com)
+[![Live Website](https://img.shields.io/badge/Live-fotoklar.de-00C853?style=flat&logo=google-chrome&logoColor=white)](https://fotoklar.de/)
 [![Created by Arif](https://img.shields.io/badge/Created%20by-Arif%20%7C%20Glyphash-6C5CE7)](https://www.glyphash.com)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115+-green.svg)](https://fastapi.tiangolo.com/)
@@ -8,7 +10,8 @@
 
 **Production-grade ICAO Doc 9303 compliant biometric passport photo validation and processing engine.**
 
-> **Live in Production**: Powering **[www.approvavisa.com](https://www.approvavisa.com)**  
+> **Live in Production**: Powering **[ApprovaVisa](https://www.approvavisa.com)**, **[FotoCarnetYa](https://fotocarnetya.com)**, and **[FotoKlar](https://fotoklar.de/)**
+>
 > **Author**: Built with love, sweat, and ungodly amounts of caffeine by **Arif**, Founder of **[Glyphash](https://www.glyphash.com)** ([www.glyphash.com](https://www.glyphash.com))
 
 ---
@@ -164,7 +167,10 @@ docker compose up --build
 ## Author & Credits
 
 - **Creator**: **Arif**, Founder of **[Glyphash](https://www.glyphash.com)** ([www.glyphash.com](https://www.glyphash.com))
-- **Live Production App**: **[ApprovaVisa](https://www.approvavisa.com)** ([www.approvavisa.com](https://www.approvavisa.com))
+- **Live Production Apps**:
+  - **[ApprovaVisa](https://www.approvavisa.com)** — [approvavisa.com](https://www.approvavisa.com)
+  - **[FotoCarnetYa](https://fotocarnetya.com)** — [fotocarnetya.com](https://fotocarnetya.com)
+  - **[FotoKlar](https://fotoklar.de/)** — [fotoklar.de](https://fotoklar.de/)
 
 ## License
 
