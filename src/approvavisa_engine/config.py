@@ -20,6 +20,8 @@ class Settings(BaseSettings):
     workers: int = 4
     cors_origins: List[str] = ["*"]
     request_timeout_seconds: int = 30
+    # Load all models before a worker accepts requests (see main._warm_up).
+    warm_up_on_start: bool = True
 
     # Image Processing
     max_image_size_mb: int = 15

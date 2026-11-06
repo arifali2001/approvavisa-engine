@@ -32,7 +32,8 @@ COPY --from=builder /usr/local/bin /usr/local/bin
 ENV U2NET_HOME=/app/.u2net \
     PYTHONUNBUFFERED=1 \
     WORKERS=3
-RUN python -c "from rembg import new_session; new_session('isnet-general-use')"
+RUN python -c "from rembg import new_session; new_session('isnet-general-use')" && \
+    python -c "import matplotlib.font_manager"
 
 EXPOSE 8000
 
