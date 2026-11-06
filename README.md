@@ -162,6 +162,14 @@ Deploy with one command:
 docker compose up --build
 ```
 
+### Production (Coolify)
+
+Production runs on a VPS with [Coolify](https://coolify.io), built from this repo's `Dockerfile`. Every push to `main` redeploys automatically. Coolify keeps the old container serving until the new one passes its health check, and each worker loads its models before it takes traffic.
+
+- Domain: `https://api.approvavisa.com` (Cloudflare DNS), container port `8000`, health check `GET /v1/health`
+- Runtime env: `API_KEY` (required; the sites' `PASSPORT_PHOTO_API_KEY`), optional `WORKERS` (default 3)
+- Memory: about 1 GB per worker (`ONNX_CPU_MEM_ARENA=false` and `MALLOC_ARENA_MAX=2` are the defaults)
+
 ---
 
 ## Author & Credits
