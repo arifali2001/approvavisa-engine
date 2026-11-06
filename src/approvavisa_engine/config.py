@@ -22,6 +22,8 @@ class Settings(BaseSettings):
     request_timeout_seconds: int = 30
     # Load all models before a worker accepts requests (see main._warm_up).
     warm_up_on_start: bool = True
+    # onnxruntime CPU memory arena for rembg. Off: ~1 GB less RAM per worker, same results.
+    onnx_cpu_mem_arena: bool = False
 
     # Image Processing
     max_image_size_mb: int = 15

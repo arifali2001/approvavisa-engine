@@ -29,8 +29,10 @@ COPY --from=builder /usr/local/bin /usr/local/bin
 
 # Bake the background-removal model into the image so a fresh container never downloads it at
 # the first customer request. (The MediaPipe models ship inside the package: data/models.)
+# MALLOC_ARENA_MAX=2: glibc otherwise keeps a malloc arena per thread and RAM only grows.
 ENV U2NET_HOME=/app/.u2net \
     PYTHONUNBUFFERED=1 \
+    MALLOC_ARENA_MAX=2 \
     WORKERS=3
 RUN python -c "from rembg import new_session; new_session('isnet-general-use')" && \
     python -c "import matplotlib.font_manager"
@@ -40,6 +42,6 @@ EXPOSE 8000
 HEALTHCHECK --interval=30s --timeout=10s --start-period=180s --retries=3 \
   CMD python -c "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8000/v1/health', timeout=5).status == 200 else 1)"
 
-# Each worker loads its own models (~0.5–1 GB RAM). 3 workers suit a 4-CPU / 8 GB VPS shared with
+# Each worker loads its own models (~1 GB RAM, ~1.6 GB peak while processing). 3 workers suit a 4-CPU / 8 GB VPS shared with
 # the websites; raise WORKERS if the box is dedicated to the engine.
 CMD ["sh", "-c", "exec uvicorn approvavisa_engine.main:app --host 0.0.0.0 --port 8000 --workers ${WORKERS} --proxy-headers --forwarded-allow-ips='*'"]

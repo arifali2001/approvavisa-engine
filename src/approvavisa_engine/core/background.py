@@ -81,8 +81,16 @@ class RembgBackgroundEngine(BaseBackgroundEngine):
     def _get_session(self):
         if self._session is None:
             try:
+                import onnxruntime as ort
                 from rembg import new_session
-                self._session = new_session(self._model_name)
+
+                from approvavisa_engine.config import settings
+
+                # The CPU memory arena keeps every peak allocation for the life of the worker
+                # (~2.2 GB per worker measured on the VPS, ~0.95 GB without it; same output).
+                opts = ort.SessionOptions()
+                opts.enable_cpu_mem_arena = settings.onnx_cpu_mem_arena
+                self._session = new_session(self._model_name, sess_opts=opts)
             except Exception as e:
                 logger.error(f"Failed to create rembg session: {e}")
         return self._session
