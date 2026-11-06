@@ -37,7 +37,7 @@ RUN python -c "from rembg import new_session; new_session('isnet-general-use')" 
 
 EXPOSE 8000
 
-HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+HEALTHCHECK --interval=30s --timeout=10s --start-period=180s --retries=3 \
   CMD python -c "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8000/v1/health', timeout=5).status == 200 else 1)"
 
 # Each worker loads its own models (~0.5–1 GB RAM). 3 workers suit a 4-CPU / 8 GB VPS shared with
