@@ -169,6 +169,21 @@ is committed or deployed yet: a push to `main` auto-deploys on Coolify.
   - Preview → paid download: **5.2 s → 1.3 s**, and the downloaded file is identical to the preview's photo.
 - **11 MP preview inline:** 5.2 s → 4.6 s on this PC. That's with the new edge-colour step, which costs ~0.4 s.
 
+### Live on the VPS (14 Nov 2026, commit 983aed6)
+
+Test photo: a 9.7 MP phone-size photo, timed inside the container.
+
+| Document | Preview | Paid download (from the preview cache) |
+|---|---|---|
+| ES DNI | 6.1 s | 2.2 s |
+| IT passport | 4.2 s | 1.6 s |
+
+- The first deploy (a5010dc) split the 4 cores 3 ways (1 thread each), and the preview took 45 s. 983aed6 gives each job
+  process all cores again.
+- The engine container now uses 3.2 GB RSS, against 1.75 GB measured for the old one while ~2 GB of swap was full.
+  Server RAM available: 2.2 GB.
+- All six sites and `/v1/health` answer 200.
+
 ### Deploy notes
 - `WORKERS` now means photo-job processes (the default is still 3). Uvicorn always runs one web process. RAM is about
   the same as before: 3 × ~1 GB, plus ~0.2 GB for the web process.
