@@ -31,6 +31,8 @@ class Settings(BaseSettings):
     max_queued_jobs_per_process: int = 5
     # CPU threads for onnxruntime/OpenCV per process. 0 = library default (all cores); set by the job pool.
     onnx_threads: int = 0
+    # Threads per job process in pool mode. 0 = all cores (default).
+    engine_threads: int = 0
     # Disk cache that lets the paid download reuse the preview's prepared photo (core/prepared_cache.py).
     # None = on in production (job_processes > 0), off in tests/dev so monkeypatched tests always recompute.
     prepared_cache_enabled: Optional[bool] = None

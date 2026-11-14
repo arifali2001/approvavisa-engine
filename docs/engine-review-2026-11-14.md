@@ -149,7 +149,7 @@ is committed or deployed yet: a push to `main` auto-deploys on Coolify.
 | Perf 1, blocking | Production runs one web process + `WORKERS` job processes (`JOB_PROCESSES`). /v1/health stays instant; more than 5 waiting photos per process gives 503 + Retry-After; a crashed job process rebuilds the pool | `core/jobs.py`, `main.py`, `Dockerfile` |
 | Perf 2, double work per sale | Disk cache keyed by pixels + spec + options: the paid download reuses the preview's photo (the same pixels the customer saw). It's on only with the job pool | `core/prepared_cache.py` |
 | Perf 4, rembg rerun | The eye-level fallback reuses the replaced background | `_process_uncached(_isolated=...)` |
-| Perf 5, threads | Each job process gets cores / processes threads for onnxruntime and OpenCV | `jobs.apply_thread_limits`, `background._get_session` |
+| Perf 5, threads | Tried cores / processes per job process: on the 4-core VPS that gave 1 thread and a 45 s preview, so each process now uses all cores again (as before); `ENGINE_THREADS` overrides | `jobs.cpu_threads_per_job` |
 | Small | Constant-time API key compare; per-job timing log line (`job=... seconds=...`) | `deps.py`, `jobs.py` |
 
 **Not done, on purpose:**

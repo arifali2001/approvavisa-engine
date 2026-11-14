@@ -36,7 +36,12 @@ JOBS: Dict[str, Callable[[Any], Any]] = {}
 
 
 def cpu_threads_per_job(processes: int) -> int:
-    return max(1, (os.cpu_count() or 1) // max(1, processes))
+    """Threads each job process may use. Default: all cores, like the old one-worker-per-photo setup. Traffic is
+    usually one photo at a time, and splitting 4 cores 3 ways made a single photo ~4x slower (measured on the VPS,
+    14 Nov 2026: 45 s preview with 1 thread). Override with ENGINE_THREADS."""
+    if settings.engine_threads > 0:
+        return settings.engine_threads
+    return max(1, os.cpu_count() or 1)
 
 
 def apply_thread_limits(threads: int) -> None:
