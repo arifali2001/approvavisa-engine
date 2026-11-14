@@ -15,6 +15,7 @@ from approvavisa_engine.api.deps import (
     get_validator,
     verify_api_key,
 )
+from approvavisa_engine.core import jobs
 from approvavisa_engine.core.edited_preparation import prepare_edited_photo
 from approvavisa_engine.core.image_utils import decode_base64_image, encode_image_base64, encode_document_image
 from approvavisa_engine.core.photo_processor import BasePhotoProcessor
@@ -37,6 +38,23 @@ async def process_photo(
     preview_gen: BasePreviewGenerator = Depends(get_preview_generator),
     validator: BaseValidator = Depends(get_validator),
     _: str = Depends(verify_api_key),
+):
+    """Process a photo (runs off the event loop, see core/jobs.py)."""
+    return await jobs.run("process", _process_sync, request, registry=registry, processor=processor,
+                          preview_gen=preview_gen, validator=validator)
+
+
+def _process_job(request: ProcessRequest):
+    return _process_sync(request, registry=get_spec_registry(), processor=get_processor(),
+                         preview_gen=get_preview_generator(), validator=get_validator())
+
+
+def _process_sync(
+    request: ProcessRequest,
+    registry: BaseSpecRegistry,
+    processor: BasePhotoProcessor,
+    preview_gen: BasePreviewGenerator,
+    validator: BaseValidator,
 ):
     """Process a photo: crop to spec dimensions, replace background, resize.
 
@@ -163,3 +181,6 @@ async def process_photo(
     except Exception as e:
         logger.exception("Processing failed")
         raise HTTPException(status_code=500, detail=f"Processing error: {e}")
+
+
+jobs.JOBS["process"] = _process_job

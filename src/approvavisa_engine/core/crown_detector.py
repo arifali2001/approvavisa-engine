@@ -51,6 +51,7 @@ class CrownDetectionResult:
     head_top_y: int = 0  # Estimated head top (may differ from crown_y for bald heads)
     confidence: float = 0.0
     subject_mask: np.ndarray | None = None  # Conservative mask for backdrop assessment.
+    person_mask: np.ndarray | None = None  # mask > 0.5, for a crown search limited to the face's columns.
 
 
 class BaseCrownDetector(ABC):
@@ -115,6 +116,7 @@ class SegmentationCrownDetector(BaseCrownDetector):
             # Threshold: person pixels > 0.5 (hair strands have soft alpha edges,
             # so >0.5 ensures we catch real hair volume without catching background noise)
             person_mask = (mask > 0.5).astype(np.uint8)
+            result.person_mask = person_mask
             # Exclude soft hair edges too; never count a shirt as a wall shadow.
             result.subject_mask = cv2.dilate(
                 (mask > 0.1).astype(np.uint8), np.ones((5, 5), dtype=np.uint8)

@@ -17,6 +17,7 @@ from approvavisa_engine.api.deps import (
     get_validator,
     verify_api_key,
 )
+from approvavisa_engine.core import jobs
 from approvavisa_engine.core.edited_preparation import prepare_edited_photo
 from approvavisa_engine.core.crown_detector import BaseCrownDetector
 from approvavisa_engine.core.face_analyzer import BaseFaceAnalyzer
@@ -53,6 +54,27 @@ async def validate_photo(
     face_analyzer: BaseFaceAnalyzer = Depends(get_face_analyzer),
     crown_detector: BaseCrownDetector = Depends(get_crown_detector),
     _: str = Depends(verify_api_key),
+):
+    """Validate a photo against country-specific biometric requirements (runs off the event loop)."""
+    return await jobs.run("validate", _validate_sync, request, registry=registry, validator=validator,
+                          processor=processor, preview_gen=preview_gen, face_analyzer=face_analyzer,
+                          crown_detector=crown_detector)
+
+
+def _validate_job(request: ValidateRequest):
+    return _validate_sync(request, registry=get_spec_registry(), validator=get_validator(),
+                          processor=get_processor(), preview_gen=get_preview_generator(),
+                          face_analyzer=get_face_analyzer(), crown_detector=get_crown_detector())
+
+
+def _validate_sync(
+    request: ValidateRequest,
+    registry: BaseSpecRegistry,
+    validator: BaseValidator,
+    processor: BasePhotoProcessor,
+    preview_gen: BasePreviewGenerator,
+    face_analyzer: BaseFaceAnalyzer,
+    crown_detector: BaseCrownDetector,
 ):
     """Validate a photo against country-specific biometric requirements.
 
@@ -189,3 +211,6 @@ async def validate_photo(
     except Exception as e:
         logger.exception("Validation failed")
         raise HTTPException(status_code=500, detail=f"Validation error: {e}")
+
+
+jobs.JOBS["validate"] = _validate_job

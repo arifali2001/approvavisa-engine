@@ -30,6 +30,10 @@ def decode_base64_image(data: str) -> np.ndarray:
     # Auto-correct EXIF orientation (phone cameras encode rotation in EXIF)
     pil_img = ImageOps.exif_transpose(pil_img)
 
+    # Colour-manage to sRGB. Phones often tag photos Display P3; reading those values as sRGB gives dull,
+    # slightly wrong skin tones. Untagged and sRGB-tagged photos are left exactly as they are.
+    pil_img = _to_srgb(pil_img)
+
     # Normalize color mode to RGB
     if pil_img.mode != "RGB":
         pil_img = pil_img.convert("RGB")
@@ -37,6 +41,45 @@ def decode_base64_image(data: str) -> np.ndarray:
     # Convert PIL (RGB) -> OpenCV (BGR)
     arr = np.array(pil_img)
     return cv2.cvtColor(arr, cv2.COLOR_RGB2BGR)
+
+
+_SRGB_PROFILE = None
+
+
+def _to_srgb(pil_img: Image.Image) -> Image.Image:
+    """Convert an image with an embedded non-sRGB ICC profile to sRGB. Never fails: on any error the
+    image is returned unchanged (the previous behaviour)."""
+    icc = pil_img.info.get("icc_profile")
+    if not icc:
+        return pil_img
+    try:
+        from PIL import ImageCms
+
+        global _SRGB_PROFILE
+        source = ImageCms.ImageCmsProfile(io.BytesIO(icc))
+        description = (ImageCms.getProfileDescription(source) or "").lower()
+        if "srgb" in description:
+            return pil_img
+        if _SRGB_PROFILE is None:
+            _SRGB_PROFILE = ImageCms.ImageCmsProfile(ImageCms.createProfile("sRGB"))
+        if pil_img.mode not in ("RGB", "CMYK"):
+            return pil_img
+        return ImageCms.profileToProfile(pil_img, source, _SRGB_PROFILE,
+                                         renderingIntent=ImageCms.Intent.PERCEPTUAL, outputMode="RGB")
+    except Exception:
+        return pil_img
+
+
+def resize_hq(image: np.ndarray, size: Tuple[int, int]) -> np.ndarray:
+    """Resize for output. Shrinking uses Pillow's antialiased Lanczos: OpenCV's INTER_LANCZOS4 keeps a fixed
+    8x8 kernel, so a 3-5x reduction aliases (jagged hair edges, moire on clothing; measured 2026-11-14).
+    Enlarging keeps OpenCV Lanczos4 (no aliasing when upscaling)."""
+    out_w, out_h = int(size[0]), int(size[1])
+    h, w = image.shape[:2]
+    if out_w >= w and out_h >= h:
+        return cv2.resize(image, (out_w, out_h), interpolation=cv2.INTER_LANCZOS4)
+    # Channel order is irrelevant to resampling, so the BGR array goes through Pillow as is.
+    return np.asarray(Image.fromarray(np.ascontiguousarray(image)).resize((out_w, out_h), Image.LANCZOS))
 
 
 def encode_image_base64(

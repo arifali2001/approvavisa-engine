@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import json
-from typing import List
+from typing import List, Optional
 
 from pydantic_settings import BaseSettings
 
@@ -24,6 +24,19 @@ class Settings(BaseSettings):
     warm_up_on_start: bool = True
     # onnxruntime CPU memory arena for rembg. Off: ~1 GB less RAM per worker, same results.
     onnx_cpu_mem_arena: bool = False
+    # Photo jobs (core/jobs.py). 0 = run inline in a thread (tests, local dev). N = a pool of N processes, each
+    # with its own models (~1 GB RAM each); the production image runs one web process with N = $WORKERS.
+    job_processes: int = 0
+    # Waiting photos per process before the engine answers 503 + Retry-After (protects the sites' 60 s timeout).
+    max_queued_jobs_per_process: int = 5
+    # CPU threads for onnxruntime/OpenCV per process. 0 = library default (all cores); set by the job pool.
+    onnx_threads: int = 0
+    # Disk cache that lets the paid download reuse the preview's prepared photo (core/prepared_cache.py).
+    # None = on in production (job_processes > 0), off in tests/dev so monkeypatched tests always recompute.
+    prepared_cache_enabled: Optional[bool] = None
+    prepared_cache_dir: str = "/tmp/approvavisa-prepared"
+    prepared_cache_ttl_seconds: int = 6 * 3600
+    prepared_cache_max_mb: int = 1500
 
     # Image Processing
     max_image_size_mb: int = 15

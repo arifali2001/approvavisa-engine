@@ -10,6 +10,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
 
 from approvavisa_engine.api.deps import get_background_engine, get_face_analyzer, verify_api_key
+from approvavisa_engine.core import jobs
 from approvavisa_engine.core.image_utils import decode_base64_image, encode_image_bytes
 from approvavisa_engine.core.portrait import BACKDROPS, FRAMES, PortraitError, make_portrait, watermark_preview
 
@@ -53,6 +54,10 @@ async def portrait_options(_: str = Depends(verify_api_key)) -> Dict[str, list]:
 
 @router.post("/portrait", response_model=PortraitResult)
 async def portrait(request: PortraitRequest, _: str = Depends(verify_api_key)):
+    return await jobs.run("portrait", _portrait_sync, request)
+
+
+def _portrait_sync(request: PortraitRequest):
     try:
         image = decode_base64_image(request.image)
     except Exception as error:
@@ -74,3 +79,6 @@ async def portrait(request: PortraitRequest, _: str = Depends(verify_api_key)):
                                     width_px=out.shape[1], height_px=out.shape[0]))
     return PortraitResult(success=True, preview=request.preview, background=result.background, images=images,
                           warnings=result.warnings)
+
+
+jobs.JOBS["portrait"] = _portrait_sync

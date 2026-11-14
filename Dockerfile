@@ -1,5 +1,5 @@
 # ApprovaVisa Engine: production image (Coolify or any Docker host).
-# Runtime env: API_KEY (required; the sites' PASSPORT_PHOTO_API_KEY), optional WORKERS (default 3),
+# Runtime env: API_KEY (required; the sites' PASSPORT_PHOTO_API_KEY), optional WORKERS (photo-job processes, default 3),
 # and any other setting in src/approvavisa_engine/config.py.
 
 # ---- Build Stage ----
@@ -42,6 +42,7 @@ EXPOSE 8000
 HEALTHCHECK --interval=30s --timeout=10s --start-period=180s --retries=3 \
   CMD python -c "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8000/v1/health', timeout=5).status == 200 else 1)"
 
-# Each worker loads its own models (~1 GB RAM, ~1.6 GB peak while processing). 3 workers suit a 4-CPU / 8 GB VPS shared with
-# the websites; raise WORKERS if the box is dedicated to the engine.
-CMD ["sh", "-c", "exec uvicorn approvavisa_engine.main:app --host 0.0.0.0 --port 8000 --workers ${WORKERS} --proxy-headers --forwarded-allow-ips='*'"]
+# One web process + WORKERS photo-job processes (core/jobs.py). Each job process loads its own models (~1 GB RAM,
+# more at peak). 3 suit a 4-CPU / 8 GB VPS shared with the websites; raise WORKERS if the box is dedicated to the engine.
+# The web process never blocks, so /v1/health answers even while every job process is busy.
+CMD ["sh", "-c", "JOB_PROCESSES=${JOB_PROCESSES:-$WORKERS} exec uvicorn approvavisa_engine.main:app --host 0.0.0.0 --port 8000 --workers 1 --proxy-headers --forwarded-allow-ips='*'"]

@@ -67,11 +67,18 @@ async def lifespan(app: FastAPI):
     logger.info(f"  Output DPI: {settings.output_dpi}")
     logger.info(f"  Background removal: {settings.enable_background_removal}")
     logger.info(f"  Alpha matting: {settings.enable_alpha_matting}")
-    if settings.warm_up_on_start:
-        import asyncio
+    import asyncio
 
+    from approvavisa_engine.core import jobs
+
+    if settings.job_processes > 0:
+        # Production: models live in the job processes only (each warms itself); this process just serves HTTP.
+        logger.info(f"  Job processes: {settings.job_processes}")
+        await asyncio.to_thread(jobs.start_pool)
+    elif settings.warm_up_on_start:
         await asyncio.to_thread(_warm_up)
     yield
+    jobs.stop_pool()
     logger.info("ApprovaVisa Engine shutting down.")
 
 

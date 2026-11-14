@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import secrets
 from typing import Optional
 
 from fastapi import Depends, HTTPException, Security
@@ -51,7 +52,7 @@ async def verify_api_key(
             status_code=401,
             detail="Missing API key. Provide via 'X-API-Key' header, 'Bearer' token, or '?api_key=' query parameter.",
         )
-    if token != settings.api_key:
+    if not secrets.compare_digest(str(token).encode(), str(settings.api_key).encode()):
         raise HTTPException(status_code=403, detail="Invalid API key")
     return token
 

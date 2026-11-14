@@ -165,8 +165,12 @@ def make_portrait(image: np.ndarray, background: str, face_analyzer, background_
         m = np.array([[scale, 0, -x * scale], [0, scale, -y * scale]], dtype=np.float32)
         warp = lambda src, border: cv2.warpAffine(src, m, (out_w, out_h), flags=cv2.INTER_LANCZOS4,
                                                  borderMode=border)
-        fg = warp(subject, cv2.BORDER_REPLICATE).astype(np.float32)
-        a = warp(alpha, cv2.BORDER_CONSTANT)
+        # warpAffine does not antialias: prefilter before a large reduction so hair edges and fabric
+        # don't alias (sigma ~ half the reduction factor, the usual Gaussian prefilter).
+        sigma = 0.5 * (1.0 / scale - 1.0) if scale < 0.8 else 0.0
+        pre = (lambda src: cv2.GaussianBlur(src, (0, 0), sigma)) if sigma > 0 else (lambda src: src)
+        fg = warp(pre(subject), cv2.BORDER_REPLICATE).astype(np.float32)
+        a = warp(pre(alpha), cv2.BORDER_CONSTANT)
         # Nothing outside the source is invented; a photo cut off above the frame's bottom edge
         # fades out softly over its last rows instead of ending in a hard line.
         a = np.where(_inside_mask(out_w, out_h, m, image.shape[:2], keep_bottom=False), a, 0.0)

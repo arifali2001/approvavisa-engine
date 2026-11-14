@@ -90,6 +90,10 @@ class RembgBackgroundEngine(BaseBackgroundEngine):
                 # (~2.2 GB per worker measured on the VPS, ~0.95 GB without it; same output).
                 opts = ort.SessionOptions()
                 opts.enable_cpu_mem_arena = settings.onnx_cpu_mem_arena
+                if settings.onnx_threads > 0:
+                    # Several engine processes share the CPU; each one taking every core only adds contention.
+                    opts.intra_op_num_threads = settings.onnx_threads
+                    opts.inter_op_num_threads = 1
                 self._session = new_session(self._model_name, sess_opts=opts)
             except Exception as e:
                 logger.error(f"Failed to create rembg session: {e}")
@@ -137,10 +141,11 @@ class RembgBackgroundEngine(BaseBackgroundEngine):
         refined = self._guided_filter(gray_f, alpha_f, radius, eps)
         refined = np.clip(refined * 255.0, 0, 255).astype(np.uint8)
 
-        # Stage 2: Morphological cleanup — remove tiny foreground speckles in background
+        # Stage 2: Cleanup. Close 1-px holes inside the subject; remove only *detached* specks in the backdrop.
+        # (A morphological open was used here before: it also erased 1-2 px hair strands and flyaways.)
         kernel_small = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3, 3))
-        refined = cv2.morphologyEx(refined, cv2.MORPH_OPEN, kernel_small, iterations=1)
         refined = cv2.morphologyEx(refined, cv2.MORPH_CLOSE, kernel_small, iterations=1)
+        refined = self._drop_detached_specks(refined)
 
         # Stage 3: Edge-aware feathering — subtle Gaussian along the transition zone only
         edge_mask = cv2.Canny(refined, 30, 100)
@@ -151,6 +156,63 @@ class RembgBackgroundEngine(BaseBackgroundEngine):
         refined[edge_region] = feathered[edge_region]
 
         return refined
+
+    @staticmethod
+    def _drop_detached_specks(alpha: np.ndarray) -> np.ndarray:
+        """Zero small alpha islands that don't touch the subject. Hair strands stay: they're connected to the head."""
+        visible = (alpha > 25).astype(np.uint8)
+        count, labels, stats, _ = cv2.connectedComponentsWithStats(visible, connectivity=8)
+        if count <= 2:
+            return alpha
+        areas = stats[1:, cv2.CC_STAT_AREA]
+        min_area = max(64, int(alpha.size * 0.0005))
+        largest = 1 + int(np.argmax(areas))
+        drop = [i for i in range(1, count) if i != largest and stats[i, cv2.CC_STAT_AREA] < min_area]
+        if not drop:
+            return alpha
+        cleaned = alpha.copy()
+        cleaned[np.isin(labels, drop)] = 0
+        return cleaned
+
+    @staticmethod
+    def _estimate_foreground(image_bgr: np.ndarray, alpha: np.ndarray) -> np.ndarray:
+        """Foreground colour of half-transparent pixels, without the old backdrop mixed in.
+
+        Blur-fusion estimator (Forte & Pitie, "Approximate Fast Foreground Colour Estimation", ICIP 2021).
+        rembg returns the source colours, which at a hair edge are part wall; compositing those on white leaves
+        a beige/green/grey fringe. Only pixels with 0 < alpha < 1 are changed; the face and clothing are not.
+        """
+        img = image_bgr.astype(np.float32)
+        out = img.copy()
+        # alpha 1-2 / 253-254 is matting noise (~40 % of a real frame); at <= 1 % weight its colour is invisible.
+        ys, xs = np.nonzero((alpha > 2) & (alpha < 253))
+        if ys.size == 0:
+            return out
+        a = alpha.astype(np.float32) / 255.0
+        a3 = a[..., None]
+        inv3 = 1.0 - a3
+        h, w = a.shape
+        ab = a[ys, xs][:, None]
+        eps = 1e-5
+
+        # The per-pixel update only matters inside the band (alpha == 1 keeps the photo, alpha == 0 is
+        # backdrop), so the box blurs run on the full frame and the update runs on band pixels only.
+        def update(blur_fa, blur_ba, blur_b1a, i_band):
+            bf = blur_fa[ys, xs] / (blur_ba[ys, xs][:, None] + eps)
+            bb = blur_b1a[ys, xs] / ((1.0 - blur_ba[ys, xs][:, None]) + eps)
+            return np.clip(bf + ab * (i_band - ab * bf - (1.0 - ab) * bb), 0.0, 255.0)
+
+        i_band = img[ys, xs]
+        r1 = int(np.clip(min(h, w) * 0.06, 15, 90))
+        # Step 1 (radius r1), with F = B = the photo.
+        blur_a1 = cv2.blur(a, (r1, r1))
+        blur_b1 = cv2.blur(img * inv3, (r1, r1))
+        f1 = img.copy()
+        f1[ys, xs] = update(cv2.blur(img * a3, (r1, r1)), blur_a1, blur_b1, i_band)
+        b1 = blur_b1 / ((1.0 - blur_a1)[..., None] + eps)
+        # Step 2 (radius 6), refining F with the step-1 estimates.
+        out[ys, xs] = update(cv2.blur(f1 * a3, (6, 6)), cv2.blur(a, (6, 6)), cv2.blur(b1 * inv3, (6, 6)), i_band)
+        return out
 
     def _guided_filter(
         self, guide: np.ndarray, src: np.ndarray, radius: int, eps: float
@@ -214,25 +276,32 @@ class RembgBackgroundEngine(BaseBackgroundEngine):
             session = self._get_session()
 
             # NumPy inputs and outputs in rembg use RGB/RGBA, not OpenCV BGR.
-            output_bgra = remove(
+            # Only the mask is taken from rembg. Its default cutout ("naive_cutout") composites the photo over
+            # transparent *black*, so edge pixels come back darkened by their alpha; compositing those again
+            # on the backdrop gave a dark fringe around hair. The colours come from the original photo instead.
+            output = remove(
                 cv2.cvtColor(image, cv2.COLOR_BGR2RGB),
                 session=session,
                 alpha_matting=self._alpha_matting,
                 alpha_matting_foreground_threshold=240,
                 alpha_matting_background_threshold=10,
+                only_mask=not self._alpha_matting,
             )
 
-            if output_bgra is None:
+            if output is None:
                 result.errors.append("rembg returned None")
                 return result
 
-            # Extract alpha channel
-            if output_bgra.shape[2] == 4:
-                alpha_raw = output_bgra[:, :, 3]
-                bgr = cv2.cvtColor(output_bgra[:, :, :3], cv2.COLOR_RGB2BGR)
+            output = np.asarray(output)
+            if output.ndim == 2:
+                alpha_raw = output.astype(np.uint8)
+            elif output.shape[2] == 4:
+                alpha_raw = output[:, :, 3]
             else:
-                alpha_raw = np.ones(output_bgra.shape[:2], dtype=np.uint8) * 255
-                bgr = cv2.cvtColor(output_bgra, cv2.COLOR_RGB2BGR)
+                alpha_raw = np.ones(output.shape[:2], dtype=np.uint8) * 255
+            if alpha_raw.shape != image.shape[:2]:
+                alpha_raw = cv2.resize(alpha_raw, (image.shape[1], image.shape[0]), interpolation=cv2.INTER_LINEAR)
+            bgr = image
 
             # Production refinement pipeline
             person_confidence = self._portrait_confidence(image)
@@ -243,15 +312,16 @@ class RembgBackgroundEngine(BaseBackgroundEngine):
             # Defringe: remove dark edge contamination
             bg_color_bgr = np.array(bg_color[::-1], dtype=np.float32)  # RGB -> BGR
             # rembg returns straight source RGB, not premultiplied foreground.
-            # Un-premultiplying it against the new backdrop creates dark halos.
-            bgr_clean = bgr
+            # Un-premultiplying it against the new backdrop creates dark halos, so instead the edge pixels'
+            # true foreground colour is estimated (removes the old wall's tint from hair edges).
+            bgr_clean = self._estimate_foreground(bgr, alpha_refined)
 
             # Final alpha compositing
             alpha_f = alpha_refined.astype(np.float32) / 255.0
             alpha_3 = np.stack([alpha_f] * 3, axis=-1)
 
-            bg = np.full_like(bgr_clean, bg_color[::-1])  # RGB -> BGR
-            composite = bgr_clean.astype(np.float32) * alpha_3 + bg.astype(np.float32) * (1.0 - alpha_3)
+            bg = np.full(bgr.shape, bg_color[::-1], dtype=np.float32)  # RGB -> BGR
+            composite = bgr_clean * alpha_3 + bg * (1.0 - alpha_3)
             result.image = np.clip(composite, 0, 255).astype(np.uint8)
             result.mask = (alpha_refined > 127).astype(np.uint8) * 255
             result.alpha = alpha_refined
